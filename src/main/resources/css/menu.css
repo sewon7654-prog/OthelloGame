@@ -1,0 +1,82 @@
+/* 메뉴 화면 스타일 */
+
+.menu-container {
+    -fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);
+}
+
+.menu-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+}
+
+.status-label-logged-in {
+    -fx-font-size: 16px;
+    -fx-text-fill: #90EE90;
+    -fx-font-weight: bold;
+}
+
+.status-label-guest {
+    -fx-font-size: 13px;
+    -fx-text-fill: #E0E0E0;
+}
+
+/* 게임 모드 버튼 */
+.game-mode-button {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-min-width: 280px;
+    -fx-min-height: 50px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.game-mode-button:hover {
+    -fx-background-color: #45a049;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 3);
+}
+
+.game-mode-button:pressed {
+    -fx-background-color: #3d8b40;
+}
+
+/* 계정 버튼 - 로그인 */
+.login-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 150px;
+    -fx-min-height: 35px;
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.login-button:hover {
+    -fx-background-color: #1976D2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+/* 계정 버튼 - 전적/로그아웃 */
+.account-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+    -fx-min-height: 35px;
+    -fx-background-color: #FF9800;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+    -fx-cursor: hand;
+}
+
+.account-button:hover {
+    -fx-background-color: #F57C00;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
