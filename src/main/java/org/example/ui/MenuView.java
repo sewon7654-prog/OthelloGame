@@ -5,8 +5,12 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -207,32 +211,90 @@ public class MenuView {
     }
 
     /**
-     * 온라인 매칭 시작 (IP 입력 다이얼로그 포함)
+     * 온라인 매칭 시작 (IP 주소와 포트 번호 입력 다이얼로그 포함)
      */
     private void startOnlineMatch() {
-        // IP 입력 팝업 띄우기 (기본값: 설정 파일에서 읽은 IP 또는 localhost)
+        // IP와 포트 입력을 위한 커스텀 다이얼로그 생성
+        Dialog<String[]> dialog = new Dialog<>();
+        dialog.setTitle("서버 접속");
+        dialog.setHeaderText("playit.gg에서 받은 IP 주소와 포트 번호를 입력하세요.");
+
+        // 기본값 설정
         String defaultIP = ConfigService.getServerIP();
         if (defaultIP == null || defaultIP.isEmpty()) {
             defaultIP = "127.0.0.1";
         }
+        String defaultPort = String.valueOf(ConfigService.getServerPort());
+
+        // 다이얼로그 버튼 설정
+        ButtonType connectButtonType = new ButtonType("연결", javafx.scene.control.ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(connectButtonType, ButtonType.CANCEL);
+
+        // 입력 필드 생성
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField ipField = new TextField();
+        ipField.setPromptText("예: 203.234.62.84");
+        ipField.setText(defaultIP);
         
-        TextInputDialog dialog = new TextInputDialog(defaultIP);
-        dialog.setTitle("서버 접속");
-        dialog.setHeaderText("접속할 서버의 IP 주소를 입력하세요.");
-        dialog.setContentText("IP 주소:");
+        TextField portField = new TextField();
+        portField.setPromptText("예: 8080");
+        portField.setText(defaultPort);
+
+        grid.add(new Label("IP 주소:"), 0, 0);
+        grid.add(ipField, 1, 0);
+        grid.add(new Label("포트 번호:"), 0, 1);
+        grid.add(portField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // 연결 버튼 활성화/비활성화 처리
+        Button connectButton = (Button) dialog.getDialogPane().lookupButton(connectButtonType);
+        connectButton.setDefaultButton(true);
+
+        // 입력값 검증
+        ipField.textProperty().addListener((observable, oldValue, newValue) -> {
+            connectButton.setDisable(ipField.getText().trim().isEmpty() || portField.getText().trim().isEmpty());
+        });
+        portField.textProperty().addListener((observable, oldValue, newValue) -> {
+            connectButton.setDisable(ipField.getText().trim().isEmpty() || portField.getText().trim().isEmpty());
+        });
+
+        // 결과 변환
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == connectButtonType) {
+                return new String[]{ipField.getText().trim(), portField.getText().trim()};
+            }
+            return null;
+        });
 
         // 입력 대기
-        Optional<String> result = dialog.showAndWait();
+        Optional<String[]> result = dialog.showAndWait();
 
         // 확인 버튼을 눌렀을 때만 실행
-        if (result.isPresent()) {
-            String ipAddress = result.get().trim();
-            if (ipAddress.isEmpty()) {
-                ipAddress = defaultIP;
+        if (result.isPresent() && result.get() != null) {
+            String[] connectionInfo = result.get();
+            String ipAddress = connectionInfo[0];
+            String portString = connectionInfo[1];
+            
+            // 포트 번호 유효성 검사
+            int port;
+            try {
+                port = Integer.parseInt(portString);
+                if (port < 1 || port > 65535) {
+                    showAlert(Alert.AlertType.ERROR, "입력 오류", "포트 번호는 1-65535 사이의 숫자여야 합니다.");
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "입력 오류", "포트 번호는 숫자여야 합니다.");
+                return;
             }
             
-            // GameView의 startOnlineMatch 메서드에 IP 전달하도록 수정 필요
-            gameView.startOnlineMatch(ipAddress);
+            // GameView의 startOnlineMatch 메서드에 IP와 포트 전달
+            gameView.startOnlineMatch(ipAddress, port);
         }
     }
 

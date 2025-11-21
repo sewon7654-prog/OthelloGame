@@ -19,7 +19,7 @@ public class DatabaseService {
     // DB 연결 정보 (추후 application.properties로 분리 가능)
     private static final String DB_URL = "jdbc:mysql://localhost:3306/othello_db?useSSL=false&serverTimezone=UTC";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "donghyeok3295"; // 실제 비밀번호로 변경 필요
+    private static final String DB_PASSWORD = "1234"; // 실제 비밀번호로 변경 필요
 
     private static DatabaseService instance;
     private Connection connection;

@@ -172,9 +172,9 @@ public class GameView {
     }
 
     /**
-     * 온라인 매칭을 시작합니다 (IP 주소 지정)
+     * 온라인 매칭을 시작합니다 (IP 주소와 포트 번호 지정)
      */
-    public void startOnlineMatch(String serverIp) {
+    public void startOnlineMatch(String serverIp, int serverPort) {
         gameModel.setGameMode(GameModel.Mode.ONLINE);
         opponentUserId = null; // 상대방 ID 초기화
         
@@ -183,21 +183,28 @@ public class GameView {
 
         if (gameModel.isOnlineMode() && networkClient != null && networkClient.isAlive()) return;
 
-        networkClient = new NetworkClient(this, currentUser != null ? currentUser.getUserId() : "Guest", serverIp);
+        networkClient = new NetworkClient(this, currentUser != null ? currentUser.getUserId() : "Guest", serverIp, serverPort);
         if (networkClient.connect()) {
             networkClient.start();
-            updateMatchingStatus("서버(" + serverIp + ")에 연결되었습니다. 상대방을 기다리는 중...");
+            updateMatchingStatus("서버(" + serverIp + ":" + serverPort + ")에 연결되었습니다. 상대방을 기다리는 중...");
         } else {
-            showAlert("Connection Failed", "서버(" + serverIp + ") 접속에 실패했습니다. NetworkServer를 실행했는지 확인하세요.");
+            showAlert("Connection Failed", "서버(" + serverIp + ":" + serverPort + ") 접속에 실패했습니다. NetworkServer를 실행했는지 확인하세요.");
             if (onBackToMenu != null) onBackToMenu.run();
         }
     }
     
     /**
-     * 온라인 매칭을 시작합니다 (기본 IP 사용)
+     * 온라인 매칭을 시작합니다 (IP 주소만 지정, 포트는 설정 파일에서 읽음)
+     */
+    public void startOnlineMatch(String serverIp) {
+        startOnlineMatch(serverIp, org.example.service.ConfigService.getServerPort());
+    }
+    
+    /**
+     * 온라인 매칭을 시작합니다 (기본 IP와 포트 사용)
      */
     public void startOnlineMatch() {
-        startOnlineMatch(org.example.service.ConfigService.getServerIP());
+        startOnlineMatch(org.example.service.ConfigService.getServerIP(), org.example.service.ConfigService.getServerPort());
     }
     
     /**
