@@ -14,8 +14,8 @@ import java.net.Socket;
  */
 public class NetworkClient extends Thread {
 
-    private static String SERVER_IP = ConfigService.getServerIP(); // 설정 파일에서 읽어옴
-    private static int SERVER_PORT = ConfigService.getServerPort(); // 설정 파일에서 읽어옴
+    private String serverIp; // 상수가 아닌 변수로 변경 (생성자에서 설정됨)
+    private static final int SERVER_PORT = ConfigService.getServerPort(); // 설정 파일에서 읽어옴
 
     private Socket socket;
     private PrintWriter out;
@@ -23,23 +23,34 @@ public class NetworkClient extends Thread {
     private GameView gameView;
     private String userId;
 
-    public NetworkClient(GameView gameView, String userId) {
+    /**
+     * 생성자 수정: IP 주소를 인자로 받음
+     */
+    public NetworkClient(GameView gameView, String userId, String serverIp) {
         this.gameView = gameView;
         this.userId = userId;
+        this.serverIp = serverIp != null ? serverIp : ConfigService.getServerIP(); // 기본값은 설정 파일에서
     }
     
     /**
-     * 서버 IP 주소 설정 (외부 접속용)
+     * 기존 호환성을 위한 생성자 (IP는 설정 파일에서 읽음)
+     */
+    public NetworkClient(GameView gameView, String userId) {
+        this(gameView, userId, null);
+    }
+    
+    /**
+     * 서버 IP 주소 설정 (외부 접속용) - 정적 메서드 유지
      */
     public static void setServerIP(String ip) {
-        SERVER_IP = ip;
+        // 더 이상 사용되지 않지만 호환성을 위해 유지
     }
     
     /**
      * 현재 설정된 서버 IP 주소 반환
      */
-    public static String getServerIP() {
-        return SERVER_IP;
+    public String getServerIP() {
+        return serverIp;
     }
 
     /**
@@ -47,13 +58,14 @@ public class NetworkClient extends Thread {
      */
     public boolean connect() {
         try {
-            socket = new Socket(SERVER_IP, SERVER_PORT);
+            // 전달받은 IP로 접속 시도
+            socket = new Socket(serverIp, SERVER_PORT);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             // 연결 시 사용자 ID 전송
             out.println("USER_ID " + userId);
-            System.out.println("Connected to server. Waiting for opponent...");
+            System.out.println("Connected to server (" + serverIp + "). Waiting for opponent...");
             return true;
         } catch (IOException e) {
             System.err.println("Failed to connect to server: " + e.getMessage());

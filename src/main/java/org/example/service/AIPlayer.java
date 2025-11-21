@@ -1,7 +1,6 @@
 package org.example.service;
 
 import org.example.model.GameModel;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -9,9 +8,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * AI 대전 기능을 위한 클래스입니다. (F-09의 고급 기능 확장)
@@ -20,98 +23,148 @@ import java.util.Random;
 public class AIPlayer {
 
     private GameModel model;
+    private Random random;
 
-    // Gemini API 설정 (환경 변수 사용 권장)
-    private static final String API_KEY = System.getenv("GEMINI_API_KEY");
-    private static final String MODEL_NAME = "gemini-2.5-flash";
-    private static final String API_BASE_URL = "https://generativelanguage.googleapis.com/v1/models/";
+    // Gemini API 설정 (환경 변수 사용 권장, 없으면 하드코딩된 키 사용)
+    private static final String API_KEY = System.getenv("GEMINI_API_KEY") != null && !System.getenv("GEMINI_API_KEY").isEmpty() 
+        ? System.getenv("GEMINI_API_KEY") 
+        : "AIzaSyDbYbZO1M9MLe-P3j02mt9-7JTqjn-v1zU"; // 폴백용 키 (환경 변수가 없을 때)
+    private static final String MODEL_NAME = "gemini-2.0-flash";
+    private static final String API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/";
 
     public AIPlayer(GameModel model) {
         this.model = model;
+        this.random = new Random();
     }
 
     /**
      * Gemini API를 호출하여 최적의 다음 수 (x, y)를 반환합니다.
+     * @param difficulty AI 난이도 (EASY, MEDIUM, HARD)
      */
-    public int[] getBestMove() throws Exception {
-        if (API_KEY == null || API_KEY.isEmpty()) {
-            throw new RuntimeException("GEMINI_API_KEY 환경 변수가 설정되지 않았습니다. AI 기능을 사용할 수 없습니다.");
+    public int[] getBestMove(GameModel.Difficulty difficulty) throws Exception {
+        List<int[]> validMoves = model.getValidMoves();
+        if (validMoves.isEmpty()) return null;
+
+        // 쉬움 난이도는 API 호출 안 함
+        if (difficulty == GameModel.Difficulty.EASY) {
+            return validMoves.get(random.nextInt(validMoves.size()));
         }
 
-        // 1. 보드 상태 및 유효한 수를 문자열로 준비
-        String prompt = buildPrompt();
+        // API 키 확인
+        if (API_KEY == null || API_KEY.length() < 10 || API_KEY.startsWith("AIzaSy...")) {
+            System.err.println("API Key가 설정되지 않았습니다. 랜덤 수로 대체합니다.");
+            return validMoves.get(random.nextInt(validMoves.size()));
+        }
 
-        // 2. API 호출
-        String responseText = callGeminiApi(prompt);
-
-        // 3. 응답에서 좌표 파싱 (예: "3, 4" 또는 "[3, 4]" 형태)
-        return parseMoveFromResponse(responseText);
+        try {
+            String prompt = buildPrompt(difficulty, validMoves);
+            String responseText = callGeminiApi(prompt);
+            return parseMoveFromResponse(responseText, validMoves);
+        } catch (Exception e) {
+            System.err.println("AI 호출 실패 (랜덤 착수): " + e.getMessage());
+            return validMoves.get(random.nextInt(validMoves.size()));
+        }
+    }
+    
+    /**
+     * 난이도 없이 호출 시 기본값(MEDIUM) 사용
+     */
+    public int[] getBestMove() throws Exception {
+        return getBestMove(GameModel.Difficulty.MEDIUM);
     }
 
     // --- 프롬프트 구성 및 로직 ---
 
-    private String buildPrompt() {
+    private String buildPrompt(GameModel.Difficulty difficulty, List<int[]> validMoves) {
         int[][] board = model.getBoard();
-        List<int[]> validMoves = model.getValidMoves();
         int aiColor = model.getAIColor();
         String aiColorName = (aiColor == 1) ? "Black" : "White";
 
         StringBuilder sb = new StringBuilder();
-        sb.append("You are playing Othello (Reversi) as ").append(aiColorName).append(" (").append(aiColor).append(").\n");
+        sb.append("You are playing Othello as ").append(aiColorName).append(".\n");
         sb.append("Current Board (0=Empty, 1=Black, 2=White):\n");
 
-        // 보드 상태를 텍스트로 표현
         for (int y = 0; y < 8; y++) {
             sb.append(Arrays.toString(board[y])).append("\n");
         }
 
-        // 유효한 수 목록을 프롬프트에 포함 (AI에게 힌트 제공)
-        sb.append("Your valid moves are: ").append(validMoves.stream()
+        sb.append("Valid moves: ").append(validMoves.stream()
                         .map(pos -> "[" + pos[0] + ", " + pos[1] + "]")
-                        .collect(java.util.stream.Collectors.joining(", ")))
+                        .collect(Collectors.joining(", ")))
                 .append(".\n");
 
-        sb.append("Your task is to choose the single best valid move (X, Y) to maximize your score and strategic position.\n");
-        sb.append("Respond ONLY with the X and Y coordinates separated by a comma. Example: 3, 4\n");
-        sb.append("Do not include any other text, explanation, or brackets.\n");
+        if (difficulty == GameModel.Difficulty.MEDIUM) {
+            sb.append("Strategy: Pick a move that flips many pieces.\n");
+        } else {
+            sb.append("Strategy: Play like an expert. Prioritize corners and stable discs.\n");
+        }
+
+        // 핵심 수정: AI에게 답변 형식을 강제합니다.
+        sb.append("\nIMPORTANT: You can think step-by-step, but at the very end of your response, you MUST output the final move in this exact format:\n");
+        sb.append("MOVE: X, Y\n");
+        sb.append("Example:\nSome reasoning...\nMOVE: 3, 4");
 
         return sb.toString();
     }
 
-    private int[] parseMoveFromResponse(String response) {
-        // 응답에서 숫자만 추출 (예: "3, 4" 또는 "The best move is 3, 4.")
-        response = response.replaceAll("[^0-9,]+", "").trim();
+    private int[] parseMoveFromResponse(String response, List<int[]> validMoves) {
+        try {
+            // 핵심 수정: 정규표현식으로 "MOVE: 숫자, 숫자" 패턴을 찾습니다.
+            // AI가 앞에 무슨 말을 하든 상관없이 마지막에 나온 좌표를 가져옵니다.
+            Pattern pattern = Pattern.compile("MOVE:\\s*(\\d+)\\s*,\\s*(\\d+)");
+            Matcher matcher = pattern.matcher(response);
 
-        if (response.contains(",")) {
-            try {
-                String[] parts = response.split(",");
-                if (parts.length == 2) {
-                    int x = Integer.parseInt(parts[0].trim());
-                    int y = Integer.parseInt(parts[1].trim());
+            int[] finalMove = null;
 
-                    // 0~7 범위 검사
-                    if (x >= 0 && x < 8 && y >= 0 && y < 8) {
-                        return new int[]{x, y};
+            // 텍스트에서 패턴을 찾습니다. (여러 개 있다면 마지막 것을 사용)
+            while (matcher.find()) {
+                int x = Integer.parseInt(matcher.group(1));
+                int y = Integer.parseInt(matcher.group(2));
+
+                // 유효한 수인지 검증
+                for (int[] move : validMoves) {
+                    if (move[0] == x && move[1] == y) {
+                        finalMove = move;
+                        break;
                     }
                 }
-            } catch (NumberFormatException ignored) {
             }
+
+            if (finalMove != null) {
+                return finalMove;
+            }
+
+            // 만약 MOVE: 패턴을 못 찾았다면, 기존 방식(숫자만 추출)으로 한 번 더 시도
+            System.out.println("패턴 매칭 실패, 단순 파싱 시도: " + response);
+            String clean = response.replaceAll("[^0-9,]", "");
+            if (clean.contains(",")) {
+                String[] parts = clean.split(",");
+                // 뒤에서부터 2개씩 짝지어 유효한 좌표인지 확인 (설명에 포함된 숫자 무시)
+                for (int i = parts.length - 2; i >= 0; i--) {
+                    try {
+                        int x = Integer.parseInt(parts[i].trim());
+                        int y = Integer.parseInt(parts[i+1].trim());
+                        for (int[] move : validMoves) {
+                            if (move[0] == x && move[1] == y) return move;
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("파싱 중 오류 발생: " + e.getMessage());
         }
-        // 파싱 실패 시, 무작위 유효한 수 반환 (안전 장치)
-        System.err.println("Gemini 파싱 실패. 무작위 수 반환.");
-        List<int[]> validMoves = model.getValidMoves();
-        if (!validMoves.isEmpty()) {
-            Random random = new Random();
-            return validMoves.get(random.nextInt(validMoves.size()));
-        }
-        return null;
+
+        // 정말 안되면 랜덤
+        System.err.println("AI 응답 해석 실패. 랜덤 수를 둡니다.");
+        return validMoves.get(random.nextInt(validMoves.size()));
     }
 
     // --- HTTP 통신 로직 (제공해주신 코드 기반) ---
 
     private String callGeminiApi(String prompt) throws Exception {
         String urlString = API_BASE_URL + MODEL_NAME + ":generateContent?key=" + API_KEY;
-        URL url = new URL(urlString);
+        URL url = java.net.URI.create(urlString).toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/json");
@@ -123,39 +176,29 @@ public class AIPlayer {
         );
 
         try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = jsonInputString.getBytes("utf-8");
+            byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
         }
 
         int responseCode = conn.getResponseCode();
-
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+        if (responseCode == 200) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
                 StringBuilder response = new StringBuilder();
-                String responseLine;
-                while ((responseLine = br.readLine()) != null) {
-                    response.append(responseLine.trim());
-                }
+                String line;
+                while ((line = br.readLine()) != null) response.append(line);
 
                 JSONObject jsonResponse = new JSONObject(response.toString());
-
-                if (jsonResponse.has("candidates")) {
-                    JSONArray candidates = jsonResponse.getJSONArray("candidates");
-                    if (candidates.length() > 0) {
-                        JSONObject content = candidates.getJSONObject(0).getJSONObject("content");
-                        JSONArray parts = content.getJSONArray("parts");
-                        if (parts.length() > 0) {
-                            return parts.getJSONObject(0).getString("text");
-                        }
-                    }
-                }
-                return "No text found.";
-
+                return jsonResponse.getJSONArray("candidates")
+                        .getJSONObject(0).getJSONObject("content")
+                        .getJSONArray("parts").getJSONObject(0)
+                        .getString("text");
             }
         } else {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"))) {
-                String errorResponse = br.lines().collect(java.util.stream.Collectors.joining("\n"));
-                throw new RuntimeException("API Call Failed: HTTP code " + responseCode + ". Response: " + errorResponse);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8))) {
+                StringBuilder errorResponse = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) errorResponse.append(line);
+                throw new RuntimeException("HTTP Error " + responseCode + ": " + errorResponse.toString());
             }
         }
     }

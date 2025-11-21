@@ -144,9 +144,14 @@ public class GameView {
         bottomPanel.getStyleClass().add("game-bottom-panel");
         bottomPanel.getChildren().add(backButton);
 
+        // 보드를 중앙 정렬하기 위한 컨테이너
+        StackPane boardContainer = new StackPane();
+        boardContainer.setAlignment(Pos.CENTER);
+        boardContainer.getChildren().add(boardView);
+
         mainLayout = new BorderPane();
         mainLayout.setTop(topPanel);
-        mainLayout.setCenter(boardView);
+        mainLayout.setCenter(boardContainer);
         mainLayout.setBottom(bottomPanel);
         mainLayout.getStyleClass().add("game-container");
 
@@ -167,9 +172,9 @@ public class GameView {
     }
 
     /**
-     * 온라인 매칭을 시작합니다
+     * 온라인 매칭을 시작합니다 (IP 주소 지정)
      */
-    public void startOnlineMatch() {
+    public void startOnlineMatch(String serverIp) {
         gameModel.setGameMode(GameModel.Mode.ONLINE);
         opponentUserId = null; // 상대방 ID 초기화
         
@@ -178,14 +183,28 @@ public class GameView {
 
         if (gameModel.isOnlineMode() && networkClient != null && networkClient.isAlive()) return;
 
-        networkClient = new NetworkClient(this, currentUser != null ? currentUser.getUserId() : "Guest");
+        networkClient = new NetworkClient(this, currentUser != null ? currentUser.getUserId() : "Guest", serverIp);
         if (networkClient.connect()) {
             networkClient.start();
-            updateMatchingStatus("서버에 연결되었습니다. 상대방을 기다리는 중...");
+            updateMatchingStatus("서버(" + serverIp + ")에 연결되었습니다. 상대방을 기다리는 중...");
         } else {
-            showAlert("Connection Failed", "서버 접속에 실패했습니다. NetworkServer를 실행했는지 확인하세요.");
+            showAlert("Connection Failed", "서버(" + serverIp + ") 접속에 실패했습니다. NetworkServer를 실행했는지 확인하세요.");
             if (onBackToMenu != null) onBackToMenu.run();
         }
+    }
+    
+    /**
+     * 온라인 매칭을 시작합니다 (기본 IP 사용)
+     */
+    public void startOnlineMatch() {
+        startOnlineMatch(org.example.service.ConfigService.getServerIP());
+    }
+    
+    /**
+     * AI 난이도 설정
+     */
+    public void setAIDifficulty(GameModel.Difficulty difficulty) {
+        gameModel.setAIDifficulty(difficulty);
     }
     
     /**
@@ -195,17 +214,17 @@ public class GameView {
         matchingScreen = new VBox(30);
         matchingScreen.setAlignment(Pos.CENTER);
         matchingScreen.setPadding(new Insets(40));
-        matchingScreen.setStyle("-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);");
+        matchingScreen.setStyle("-fx-background-color: linear-gradient(to bottom, #4A5D4A, #2F4F2F);");
         
         Label titleLabel = new Label("온라인 매칭");
-        titleLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);");
+        titleLabel.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 3);");
         
         matchingLabel = new Label("서버에 연결 중...");
-        matchingLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #E0E0E0;");
+        matchingLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #A8D5BA; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 1);");
         
         // 로딩 애니메이션 (점 3개)
         Label loadingDots = new Label("...");
-        loadingDots.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+        loadingDots.setStyle("-fx-font-size: 24px; -fx-text-fill: #A8D5BA; -fx-font-weight: bold;");
         
         // 간단한 로딩 애니메이션
         Timeline timeline = new Timeline(
@@ -223,11 +242,43 @@ public class GameView {
             -fx-font-weight: bold;
             -fx-min-width: 120px;
             -fx-min-height: 35px;
-            -fx-background-color: #FF5722;
+            -fx-background-color: linear-gradient(to bottom, #6B8E6B, #4A5D4A);
             -fx-text-fill: white;
             -fx-background-radius: 8px;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
             -fx-cursor: hand;
+            -fx-border-color: #2F4F2F;
+            -fx-border-width: 1.5px;
+            -fx-border-radius: 8px;
         """);
+        cancelButton.setOnMouseEntered(e -> cancelButton.setStyle("""
+            -fx-font-size: 14px;
+            -fx-font-weight: bold;
+            -fx-min-width: 120px;
+            -fx-min-height: 35px;
+            -fx-background-color: linear-gradient(to bottom, #7CB68C, #556B55);
+            -fx-text-fill: white;
+            -fx-background-radius: 8px;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 7, 0, 0, 3);
+            -fx-cursor: hand;
+            -fx-border-color: #2F4F2F;
+            -fx-border-width: 1.5px;
+            -fx-border-radius: 8px;
+        """));
+        cancelButton.setOnMouseExited(e -> cancelButton.setStyle("""
+            -fx-font-size: 14px;
+            -fx-font-weight: bold;
+            -fx-min-width: 120px;
+            -fx-min-height: 35px;
+            -fx-background-color: linear-gradient(to bottom, #6B8E6B, #4A5D4A);
+            -fx-text-fill: white;
+            -fx-background-radius: 8px;
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+            -fx-cursor: hand;
+            -fx-border-color: #2F4F2F;
+            -fx-border-width: 1.5px;
+            -fx-border-radius: 8px;
+        """));
         cancelButton.setOnAction(e -> {
             if (networkClient != null && networkClient.isAlive()) {
                 try {
@@ -347,8 +398,11 @@ public class GameView {
         // AI가 수를 계산하는 동안 UI 멈춤 방지를 위해 쓰레드 사용
         new Thread(() -> {
             try {
-                // AI에게 현재 보드 상태를 넘기고 최적의 수를 요청
-                int[] move = aiPlayer.getBestMove();
+                // 약간의 딜레이 추가 (AI가 생각하는 것처럼 보이게)
+                Thread.sleep(700);
+                
+                // AI에게 현재 보드 상태를 넘기고 최적의 수를 요청 (난이도 포함)
+                int[] move = aiPlayer.getBestMove(gameModel.getAIDifficulty());
 
                 // UI 업데이트는 Platform.runLater로 메인 스레드에서 실행
                 Platform.runLater(() -> {
@@ -457,84 +511,17 @@ public class GameView {
      * 게임 결과를 DB에 저장
      */
     private void saveGameResult() {
-        // 로그인하지 않은 경우 저장하지 않음
-        if (currentUser == null || !dbService.isConnected()) {
-            return;
-        }
-
-        int blackScore = gameModel.getScore(1);
-        int whiteScore = gameModel.getScore(2);
-        
-        // 로컬 2인 대전 모드: 전적은 업데이트하지 않고 게임 기록만 저장
-        if (gameModel.getGameMode() == GameModel.Mode.LOCAL) {
-            String winnerId;
-            if (blackScore > whiteScore) {
-                winnerId = currentUser.getUserId() + " (Black)";
-            } else if (whiteScore > blackScore) {
-                winnerId = currentUser.getUserId() + " (White)";
-            } else {
-                winnerId = "DRAW";
-            }
-            
-            // 로컬 2인 대전은 전적 업데이트 없이 기록만 저장
-            String player1 = currentUser.getUserId() + " (Black)";
-            String player2 = currentUser.getUserId() + " (White)";
-            dbService.saveGameRecord(player1, player2, winnerId, blackScore, whiteScore, "[]");
-            System.out.println("Local game record saved (no stats updated)");
+        // GameModel을 통해 게임 결과 저장 (아키텍처 개선: GUI가 DB를 직접 호출하지 않음)
+        if (currentUser == null) {
             return;
         }
         
-        // AI 모드 또는 온라인 모드
-        String winnerId;
-        String player1 = currentUser.getUserId();
-        String player2;
-        
-        if (gameModel.isAIMode()) {
-            // AI 모드
-            player2 = "AI";
-            if (blackScore > whiteScore) {
-                // 흑돌이 이김 - currentUser가 흑돌인지 백돌인지 확인 필요
-                // AI 모드에서는 currentUser가 항상 AI가 아닌 색상을 가짐
-                winnerId = currentUser.getUserId();
-                dbService.updateWin(currentUser.getUserId());
-            } else if (whiteScore > blackScore) {
-                winnerId = "AI";
-                dbService.updateLoss(currentUser.getUserId());
-            } else {
-                winnerId = "DRAW";
-                dbService.updateDraw(currentUser.getUserId());
-            }
-        } else if (gameModel.isOnlineMode()) {
-            // 온라인 모드
-            player2 = (opponentUserId != null) ? opponentUserId : "Online_Opponent";
-            if (blackScore > whiteScore) {
-                // 흑돌 승리
-                if (myColor == 1) {
-                    winnerId = currentUser.getUserId();
-                    dbService.updateWin(currentUser.getUserId());
-                } else {
-                    winnerId = player2;
-                    dbService.updateLoss(currentUser.getUserId());
-                }
-            } else if (whiteScore > blackScore) {
-                // 백돌 승리
-                if (myColor == 2) {
-                    winnerId = currentUser.getUserId();
-                    dbService.updateWin(currentUser.getUserId());
-                } else {
-                    winnerId = player2;
-                    dbService.updateLoss(currentUser.getUserId());
-                }
-            } else {
-                winnerId = "DRAW";
-                dbService.updateDraw(currentUser.getUserId());
-            }
-        } else {
-            return; // 알 수 없는 모드
-        }
-        
-        dbService.saveGameRecord(player1, player2, winnerId, blackScore, whiteScore, "[]");
-        System.out.println("Game result saved to database for user: " + currentUser.getUserId());
+        // GameModel의 saveGameResult 메서드 호출
+        gameModel.saveGameResult(
+            currentUser.getUserId(), 
+            opponentUserId, 
+            myColor
+        );
     }
 
     private String getWinnerMessage() {
@@ -612,23 +599,40 @@ public class GameView {
     private StackPane createTile(int x, int y) {
         Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE);
         
-        // 더 예쁜 바둑판 디자인 - 나무 질감 느낌의 그라데이션
+        // 이미지 기반 바둑판 디자인 - 녹색 체크무늬 패턴
         if ((x + y) % 2 == 0) {
-            // 밝은 타일 - 나무 질감 느낌
-            tile.setFill(Color.web("#D4AF37")); // 골드 브라운
+            // 밝은 연두색 타일 - 왼쪽 상단에서 오른쪽 하단으로 그라데이션
+            javafx.scene.paint.LinearGradient lightGreenGradient = new javafx.scene.paint.LinearGradient(
+                0, 0, 1, 1, true, null,
+                new javafx.scene.paint.Stop(0, Color.web("#A8D5BA")), // 왼쪽 상단 - 밝은 연두색
+                new javafx.scene.paint.Stop(0.5, Color.web("#8FBC8F")), // 중앙
+                new javafx.scene.paint.Stop(1, Color.web("#7CB68C"))  // 오른쪽 하단 - 약간 어두운 연두색
+            );
+            tile.setFill(lightGreenGradient);
         } else {
-            // 어두운 타일 - 더 진한 나무 색
-            tile.setFill(Color.web("#B8860B")); // 다크 골든로드
+            // 어두운 녹색 타일 - 왼쪽 상단에서 오른쪽 하단으로 그라데이션
+            javafx.scene.paint.LinearGradient darkGreenGradient = new javafx.scene.paint.LinearGradient(
+                0, 0, 1, 1, true, null,
+                new javafx.scene.paint.Stop(0, Color.web("#6B8E6B")), // 왼쪽 상단 - 밝은 녹색
+                new javafx.scene.paint.Stop(0.5, Color.web("#556B55")), // 중앙
+                new javafx.scene.paint.Stop(1, Color.web("#4A5D4A"))  // 오른쪽 하단 - 어두운 녹색
+            );
+            tile.setFill(darkGreenGradient);
         }
         
-        // 테두리 - 더 세련된 느낌
-        tile.setStroke(Color.web("#8B6914"));
-        tile.setStrokeWidth(1.5);
-        tile.setArcWidth(3);
-        tile.setArcHeight(3);
+        // 테두리 - 어두운 녹색, 얇은 선
+        tile.setStroke(Color.web("#2F4F2F"));
+        tile.setStrokeWidth(1);
+        tile.setArcWidth(2);
+        tile.setArcHeight(2);
         
-        // 그림자 효과를 위한 스타일
-        tile.setEffect(new javafx.scene.effect.DropShadow(2, Color.web("#00000033")));
+        // 타일 사이 구분선 효과를 위한 그림자
+        javafx.scene.effect.DropShadow tileShadow = new javafx.scene.effect.DropShadow();
+        tileShadow.setRadius(1);
+        tileShadow.setColor(Color.web("#FFFFFF22")); // 밝은 선 효과
+        tileShadow.setOffsetX(0.5);
+        tileShadow.setOffsetY(0.5);
+        tile.setEffect(tileShadow);
         
         return new StackPane(tile);
     }
@@ -636,24 +640,38 @@ public class GameView {
     private Circle createPiece(Color color) {
         Circle piece = new Circle(TILE_SIZE * 0.4);
         
-        // 그라데이션 효과로 더 입체적인 돌
+        // 방사형 그라데이션으로 강한 3D 효과
         if (color == Color.BLACK || color.equals(customBlackColor)) {
-            // 흑돌 - 반사광 효과
-            javafx.scene.paint.LinearGradient blackGradient = new javafx.scene.paint.LinearGradient(
-                0, 0, 0, 1, true, null,
-                new javafx.scene.paint.Stop(0, Color.web("#2C2C2C")),
-                new javafx.scene.paint.Stop(0.5, Color.web("#1A1A1A")),
-                new javafx.scene.paint.Stop(1, Color.web("#000000"))
+            // 흑돌 - 중앙 상단 하이라이트에서 바깥쪽으로 어두워지는 방사형 그라데이션
+            javafx.scene.paint.RadialGradient blackGradient = new javafx.scene.paint.RadialGradient(
+                0,  // focusAngle
+                0,  // focusDistance
+                0.3,  // centerX (약간 위쪽)
+                0.3,  // centerY (약간 위쪽)
+                0.5,  // radius
+                true,  // proportional
+                javafx.scene.paint.CycleMethod.NO_CYCLE,
+                new javafx.scene.paint.Stop(0, Color.web("#4A4A4A")), // 중앙 상단 - 어두운 회색 하이라이트
+                new javafx.scene.paint.Stop(0.3, Color.web("#2C2C2C")), // 중간
+                new javafx.scene.paint.Stop(0.6, Color.web("#1A1A1A")), // 바깥쪽
+                new javafx.scene.paint.Stop(1, Color.web("#000000"))  // 가장자리 - 깊은 검은색
             );
             piece.setFill(blackGradient);
             piece.setStroke(Color.web("#0A0A0A"));
         } else {
-            // 백돌 - 반사광 효과
-            javafx.scene.paint.LinearGradient whiteGradient = new javafx.scene.paint.LinearGradient(
-                0, 0, 0, 1, true, null,
-                new javafx.scene.paint.Stop(0, Color.web("#FFFFFF")),
-                new javafx.scene.paint.Stop(0.5, Color.web("#F5F5F5")),
-                new javafx.scene.paint.Stop(1, Color.web("#E0E0E0"))
+            // 백돌 - 중앙 상단 하이라이트에서 바깥쪽으로 어두워지는 방사형 그라데이션
+            javafx.scene.paint.RadialGradient whiteGradient = new javafx.scene.paint.RadialGradient(
+                0,  // focusAngle
+                0,  // focusDistance
+                0.3,  // centerX (약간 위쪽)
+                0.3,  // centerY (약간 위쪽)
+                0.5,  // radius
+                true,  // proportional
+                javafx.scene.paint.CycleMethod.NO_CYCLE,
+                new javafx.scene.paint.Stop(0, Color.web("#FFFFFF")), // 중앙 상단 - 밝은 흰색 하이라이트
+                new javafx.scene.paint.Stop(0.3, Color.web("#F5F5F5")), // 중간
+                new javafx.scene.paint.Stop(0.6, Color.web("#E0E0E0")), // 바깥쪽
+                new javafx.scene.paint.Stop(1, Color.web("#C0C0C0"))  // 가장자리 - 부드러운 회색
             );
             piece.setFill(whiteGradient);
             piece.setStroke(Color.web("#BDBDBD"));
@@ -661,10 +679,12 @@ public class GameView {
         
         piece.setStrokeWidth(1.5);
         
-        // 그림자 효과
+        // 부드러운 그림자 효과 - 돌이 보드 위에 떠 있는 느낌
         javafx.scene.effect.DropShadow shadow = new javafx.scene.effect.DropShadow();
-        shadow.setRadius(3);
-        shadow.setColor(Color.web("#00000066"));
+        shadow.setRadius(4);
+        shadow.setColor(Color.web("#00000088")); // 더 진한 그림자
+        shadow.setOffsetX(2);
+        shadow.setOffsetY(2);
         piece.setEffect(shadow);
         
         return piece;
