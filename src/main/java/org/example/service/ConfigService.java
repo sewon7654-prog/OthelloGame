@@ -57,5 +57,24 @@ public class ConfigService {
     public static void setServerIP(String ip) {
         properties.setProperty("server.ip", ip);
     }
+    
+    /**
+     * Gemini API 키 반환
+     */
+    public static String getGeminiApiKey() {
+        // 1순위: 환경 변수
+        String envKey = System.getenv("GEMINI_API_KEY");
+        if (envKey != null && !envKey.isEmpty()) {
+            return envKey;
+        }
+        
+        // 2순위: config.properties
+        String configKey = properties.getProperty("gemini.api.key", "");
+        if (configKey != null && !configKey.isEmpty()) {
+            return configKey;
+        }
+        
+        return null;
+    }
 }
 

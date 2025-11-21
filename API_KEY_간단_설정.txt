@@ -1,0 +1,14 @@
+======================================
+Gemini API 키 설정 (간단 버전)
+======================================
+
+1. API 키 발급
+   https://makersuite.google.com/app/apikey
+
+2. config.properties 수정
+   파일 위치: src/main/resources/config.properties
+   
+   gemini.api.key=여기에_발급받은_API_키_붙여넣기
+
+3. 완료! 게임 실행하면 됨
+

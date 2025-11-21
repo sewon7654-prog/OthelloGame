@@ -4,6 +4,10 @@ target/
 !**/src/test/**/target/
 .kotlin
 
+# API 키 등 민감한 정보가 포함된 설정 파일
+# config.properties는 Git에 올리되, API 키는 비워둠
+# 각자 로컬에서 API 키를 추가해야 함
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
