@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -765,12 +766,15 @@ public class GameView {
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    private void showAlert(String title, String message) {
+        // Animation/레이아웃 처리 중에도 안전하게 다음 UI 펄스에서 실행
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
     
     /**
@@ -1104,18 +1108,14 @@ public class GameView {
     }
 
     private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result, int ownerColor) {
-        showAlert("미니게임 성공!",
-            "축하합니다! 미니게임에 성공했습니다.\n" +
-            "점수: " + result.getScore() + "\n" +
-            "소요 시간: " + result.getTimeElapsed() + "초\n\n" +
-            "찬스 효과: 상대의 돌을 강제 랜덤 수로 둔 뒤 내 턴을 유지합니다.");
-
+        // 1) 먼저 이점 적용: 상대 돌 강제 수 + 턴 유지
         int opponentColor = ownerColor == 1 ? 2 : 1;
         int[] forcedMove = pickRandomMoveFor(opponentColor);
         if (forcedMove != null) {
             applyForcedMove(opponentColor, ownerColor, forcedMove);
         }
 
+        // 2) 온라인이면 좌표 포함해 결과 전송
         if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
             String resultMessage = org.example.minigame.network.MinigameProtocol
                 .createResultMessage(true, result.getScore(), result.getTimeElapsed(),
@@ -1123,6 +1123,13 @@ public class GameView {
                         forcedMove != null ? forcedMove[1] : -1);
             networkClient.sendMinigameResult(resultMessage);
         }
+
+        // 3) 알림은 마지막에 안전하게 표시
+        showAlert("미니게임 성공!",
+            "축하합니다! 미니게임에 성공했습니다.\n" +
+            "점수: " + result.getScore() + "\n" +
+            "소요 시간: " + result.getTimeElapsed() + "초\n\n" +
+            "찬스 효과: 상대의 돌을 강제 랜덤 수로 둔 뒤 내 턴을 유지합니다.");
     }
 
     public void showMinigameSpectator(String gameType) {
