@@ -774,18 +774,24 @@ public class GameView {
      * 오른쪽 사이드바 패널 생성 (카드 + 버튼)
      */
     private VBox createRightPanel(Button backButton) {
-        VBox rightPanel = new VBox(18);
-        rightPanel.setPadding(new Insets(15));
+        VBox rightPanel = new VBox(15);
+        rightPanel.setPadding(new Insets(20, 15, 20, 15));
         rightPanel.setAlignment(Pos.CENTER);
         rightPanel.getStyleClass().add("right-panel");
+        rightPanel.setMinWidth(220);
         
         // 카드 제목
         Label cardTitle = new Label("🎴 찬스카드");
         cardTitle.setFont(cinzelFont);
-        cardTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFD700;");
+        cardTitle.setStyle(
+            "-fx-font-size: 18px; " +
+            "-fx-font-weight: bold; " +
+            "-fx-text-fill: #f4e5b7; " +
+            "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 2, 2);"
+        );
         
         // 기억력 게임 카드
-        memoryCard = createSingleCard("🧠", "기억력", "MEMORY", 0);
+        memoryCard = createSingleCard("🎲", "기억력", "MEMORY", 0);
         
         // 반응속도 게임 카드
         reactionCard = createSingleCard("⚡", "반응속도", "REACTION", 1);
@@ -794,8 +800,8 @@ public class GameView {
         dodgeCard = createSingleCard("🎯", "회피게임", "DODGE", 2);
         
         // 구분선
-        Region spacer = new Region();
-        spacer.setPrefHeight(20);
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        spacer.setPrefHeight(15);
         
         rightPanel.getChildren().addAll(
             cardTitle,
@@ -813,66 +819,132 @@ public class GameView {
      * 단일 카드 생성
      */
     private VBox createSingleCard(String icon, String name, String gameType, int cardIndex) {
-        VBox card = new VBox(12);
-        card.setAlignment(Pos.CENTER);
-        card.setPrefSize(160, 180);
-        card.getStyleClass().add("game-card");
+        // 메인 카드 컨테이너
+        javafx.scene.layout.StackPane cardStack = new javafx.scene.layout.StackPane();
+        cardStack.setPrefSize(180, 230);
         
-        // 카드 이미지 또는 아이콘
-        javafx.scene.Node cardIcon;
-        try {
-            // 이미지 파일 경로 설정
-            String imagePath = "/images/cards/" + gameType.toLowerCase() + ".png";
-            java.io.InputStream imageStream = getClass().getResourceAsStream(imagePath);
-            
-            if (imageStream != null) {
-                // 이미지가 존재하면 ImageView 사용
-                javafx.scene.image.Image image = new javafx.scene.image.Image(imageStream);
-                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(image);
-                imageView.setFitWidth(100);
-                imageView.setFitHeight(100);
-                imageView.setPreserveRatio(true);
-                cardIcon = imageView;
-            } else {
-                // 이미지가 없으면 이모지 사용 (폴백)
-                Label iconLabel = new Label(icon);
-                iconLabel.getStyleClass().add("card-icon");
-                iconLabel.setStyle("-fx-font-size: 60px;");
-                cardIcon = iconLabel;
-            }
-        } catch (Exception e) {
-            // 오류 발생 시 이모지 사용
-            Label iconLabel = new Label(icon);
-            iconLabel.getStyleClass().add("card-icon");
-            iconLabel.setStyle("-fx-font-size: 60px;");
-            cardIcon = iconLabel;
-        }
+        // 카드 배경
+        VBox card = new VBox(18);
+        card.setAlignment(Pos.CENTER);
+        card.setPrefSize(180, 230);
+        card.getStyleClass().addAll("game-card", "card-" + gameType.toLowerCase());
+        
+        // 장식용 내부 테두리
+        javafx.scene.shape.Rectangle innerBorder = new javafx.scene.shape.Rectangle(
+            180 - 20, 230 - 20
+        );
+        innerBorder.setFill(Color.TRANSPARENT);
+        innerBorder.setStroke(Color.web("#d4a024", 0.4));
+        innerBorder.setStrokeWidth(2);
+        innerBorder.setArcWidth(8);
+        innerBorder.setArcHeight(8);
+        
+        // 상단 장식 (다이아몬드)
+        Label topDecoration = new Label("◆");
+        topDecoration.getStyleClass().add("card-top-decoration");
+        javafx.scene.layout.StackPane.setAlignment(topDecoration, Pos.TOP_CENTER);
+        javafx.scene.layout.StackPane.setMargin(topDecoration, new Insets(15, 0, 0, 0));
+        
+        // 카드 컨텐츠 컨테이너
+        VBox cardContent = new VBox(15);
+        cardContent.setAlignment(Pos.CENTER);
+        
+        // 카드 아이콘 (Float 애니메이션 추가)
+        Label iconLabel = new Label(icon);
+        iconLabel.getStyleClass().add("card-icon");
+        
+        // Float 애니메이션
+        javafx.animation.Timeline floatAnimation = new javafx.animation.Timeline(
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.ZERO,
+                new javafx.animation.KeyValue(iconLabel.translateYProperty(), 0)
+            ),
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.seconds(1),
+                new javafx.animation.KeyValue(iconLabel.translateYProperty(), -8)
+            ),
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.seconds(2),
+                new javafx.animation.KeyValue(iconLabel.translateYProperty(), 0)
+            )
+        );
+        floatAnimation.setCycleCount(javafx.animation.Timeline.INDEFINITE);
+        floatAnimation.play();
         
         // 카드 이름
         Label nameLabel = new Label(name);
         nameLabel.getStyleClass().add("card-name");
-        nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         
-        card.getChildren().addAll(cardIcon, nameLabel);
+        cardContent.getChildren().addAll(iconLabel, nameLabel);
+        
+        // 모든 요소를 스택에 추가
+        cardStack.getChildren().addAll(card, innerBorder, topDecoration, cardContent);
+        
+        // VBox로 래핑 (기존 코드와 호환성 유지)
+        VBox wrapper = new VBox(cardStack);
+        wrapper.setAlignment(Pos.CENTER);
         
         // 클릭 이벤트
-        card.setOnMouseClicked(e -> {
+        cardStack.setOnMouseClicked(e -> {
             if (!cardUsed[cardIndex]) {
                 useChanceCard(gameType, cardIndex);
             }
         });
         
-        // 호버 효과
-        card.setOnMouseEntered(e -> {
+        // 호버 효과 (카드 올라가기 + 그림자 증가)
+        javafx.animation.ScaleTransition scaleUp = new javafx.animation.ScaleTransition(
+            javafx.util.Duration.millis(200), cardStack
+        );
+        scaleUp.setToX(1.05);
+        scaleUp.setToY(1.05);
+        
+        javafx.animation.TranslateTransition moveUp = new javafx.animation.TranslateTransition(
+            javafx.util.Duration.millis(200), cardStack
+        );
+        moveUp.setToY(-10);
+        
+        javafx.animation.ScaleTransition scaleDown = new javafx.animation.ScaleTransition(
+            javafx.util.Duration.millis(200), cardStack
+        );
+        scaleDown.setToX(1.0);
+        scaleDown.setToY(1.0);
+        
+        javafx.animation.TranslateTransition moveDown = new javafx.animation.TranslateTransition(
+            javafx.util.Duration.millis(200), cardStack
+        );
+        moveDown.setToY(0);
+        
+        cardStack.setOnMouseEntered(e -> {
             if (!cardUsed[cardIndex]) {
-                card.setStyle("-fx-scale-x: 1.05; -fx-scale-y: 1.05;");
+                scaleUp.play();
+                moveUp.play();
             }
         });
-        card.setOnMouseExited(e -> {
-            card.setStyle("-fx-scale-x: 1.0; -fx-scale-y: 1.0;");
+        
+        cardStack.setOnMouseExited(e -> {
+            scaleDown.play();
+            moveDown.play();
         });
         
-        return card;
+        // 카드 인덱스 저장 (업데이트용)
+        wrapper.setUserData(new CardData(cardStack, iconLabel, floatAnimation));
+        
+        return wrapper;
+    }
+    
+    /**
+     * 카드 데이터 저장용 내부 클래스
+     */
+    private static class CardData {
+        javafx.scene.layout.StackPane cardStack;
+        Label iconLabel;
+        javafx.animation.Timeline floatAnimation;
+        
+        CardData(javafx.scene.layout.StackPane cardStack, Label iconLabel, javafx.animation.Timeline floatAnimation) {
+            this.cardStack = cardStack;
+            this.iconLabel = iconLabel;
+            this.floatAnimation = floatAnimation;
+        }
     }
     
     /**
@@ -910,17 +982,38 @@ public class GameView {
      * 카드 외관 업데이트 (사용된 카드)
      */
     private void updateCardAppearance(int cardIndex) {
-        VBox card = null;
+        VBox wrapper = null;
         switch (cardIndex) {
-            case 0: card = memoryCard; break;
-            case 1: card = reactionCard; break;
-            case 2: card = dodgeCard; break;
+            case 0: wrapper = memoryCard; break;
+            case 1: wrapper = reactionCard; break;
+            case 2: wrapper = dodgeCard; break;
         }
         
-        if (card != null) {
-            card.setOpacity(0.3);
-            card.setDisable(true);
-            card.getStyleClass().add("card-used");
+        if (wrapper != null && wrapper.getUserData() instanceof CardData) {
+            CardData data = (CardData) wrapper.getUserData();
+            
+            // Float 애니메이션 중지
+            data.floatAnimation.stop();
+            data.iconLabel.setTranslateY(0);
+            data.iconLabel.setOpacity(0.5);
+            
+            // 카드를 회색으로 변경
+            javafx.scene.layout.StackPane cardStack = data.cardStack;
+            
+            // card-used 스타일 추가
+            if (cardStack.getChildren().size() > 0 && cardStack.getChildren().get(0) instanceof VBox) {
+                VBox card = (VBox) cardStack.getChildren().get(0);
+                card.getStyleClass().add("card-used");
+            }
+            
+            // USED 스탬프 추가
+            Label usedStamp = new Label("USED");
+            usedStamp.getStyleClass().add("used-stamp");
+            javafx.scene.layout.StackPane.setAlignment(usedStamp, Pos.CENTER);
+            cardStack.getChildren().add(usedStamp);
+            
+            // 마우스 커서 변경
+            cardStack.setDisable(true);
         }
     }
     

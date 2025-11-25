@@ -1,41 +1,48 @@
 /* 게임 화면 스타일 */
 
 .game-container {
-    -fx-background-color: #E8EAF6;
+    -fx-background-color: linear-gradient(to bottom right, #2d6a4f 0%, #1e5128 100%);
 }
 
 /* 상단 패널 */
 .game-top-panel {
-    -fx-background-color: linear-gradient(to right, #ECEFF1, #CFD8DC);
+    -fx-background-color: rgba(30, 81, 40, 0.8);
+    -fx-border-color: rgba(244, 229, 183, 0.3);
+    -fx-border-width: 0 0 2px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 3);
 }
 
 .mode-label {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2C3E50;
+    -fx-text-fill: #f4e5b7;
     -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 2, 2);
 }
 
 .score-label {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #1976D2;
+    -fx-text-fill: #f4e5b7;
     -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 3, 0, 1, 1);
 }
 
 .score-label-game-over {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: #D32F2F;
+    -fx-text-fill: #ffd60a;
     -fx-padding: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 5, 0, 2, 2);
 }
 
 /* 오른쪽 사이드바 */
 .right-panel {
-    -fx-background-color: #2F4F2F;
+    -fx-background-color: linear-gradient(to bottom, #2d6a4f 0%, #1e5128 100%);
     -fx-border-color: #1a1a1a;
     -fx-border-width: 0 0 0 3px;
-    -fx-min-width: 250px;
+    -fx-min-width: 220px;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, -5, 0);
 }
 
 /* 찬스카드 패널 */
@@ -44,71 +51,170 @@
     -fx-padding: 10;
 }
 
-/* 게임 카드 (유희왕 스타일) */
+/* ============================================
+   찬스카드 공통 스타일
+   ============================================ */
 .game-card {
-    -fx-background-color: linear-gradient(to bottom, #FFD700 0%, #FFA500 100%);
-    -fx-border-color: #8B4513;
-    -fx-border-width: 4px;
-    -fx-border-radius: 15px;
-    -fx-background-radius: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 5);
+    -fx-border-width: 5px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
     -fx-cursor: hand;
     -fx-padding: 15;
 }
 
-.game-card:hover {
-    -fx-background-color: linear-gradient(to bottom, #FFE44D 0%, #FFB84D 100%);
-    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.8), 20, 0, 0, 7);
+/* 반응속도 카드 (노란색/금색) */
+.card-reaction {
+    -fx-background-color: linear-gradient(to bottom, #ffd60a 0%, #ffb703 50%, #ffd60a 100%);
+    -fx-border-color: #d4a024;
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
 }
 
+.card-reaction:hover {
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(255, 214, 10, 0.6), 20, 0, 0, 15);
+}
+
+/* 회피게임 카드 (빨간색) */
+.card-dodge {
+    -fx-background-color: linear-gradient(to bottom, #ff6b6b 0%, #ee5a6f 50%, #ff6b6b 100%);
+    -fx-border-color: #c92a2a;
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
+}
+
+.card-dodge:hover {
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(255, 107, 107, 0.6), 20, 0, 0, 15);
+}
+
+/* 기억력 카드 (녹색) */
+.card-memory {
+    -fx-background-color: linear-gradient(to bottom, #74c69d 0%, #52b788 50%, #74c69d 100%);
+    -fx-border-color: #2d6a4f;
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
+}
+
+.card-memory:hover {
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(116, 198, 157, 0.6), 20, 0, 0, 15);
+}
+
+/* 카드 내부 장식용 테두리 */
+.card-inner-border {
+    -fx-border-color: rgba(212, 160, 36, 0.4);
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-color: transparent;
+}
+
+/* 카드 아이콘 */
 .game-card .card-icon {
-    -fx-font-size: 60px;
-    -fx-text-fill: #2C3E50;
-    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.7), 5, 0, 0, 0);
+    -fx-font-size: 70px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 6, 0, 3, 3);
 }
 
+/* 카드 이름 */
 .game-card .card-name {
     -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2C3E50;
-    -fx-background-color: rgba(255, 255, 255, 0.7);
-    -fx-padding: 6 12;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #1e5128;
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-padding: 10 20;
+    -fx-border-color: rgba(212, 160, 36, 0.5);
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.8), 1, 0, 1, 1);
 }
 
+/* 카드 상단 장식 */
+.card-top-decoration {
+    -fx-font-size: 20px;
+    -fx-text-fill: #d4a024;
+    -fx-opacity: 0.6;
+}
+
+/* 사용된 카드 */
 .card-used {
-    -fx-background-color: linear-gradient(to bottom, #888888 0%, #555555 100%);
+    -fx-background-color: linear-gradient(to bottom, #999999 0%, #666666 50%, #999999 100%) !important;
+    -fx-border-color: #555555 !important;
+    -fx-opacity: 0.6;
     -fx-cursor: default;
 }
 
-.card-used:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+.card-used .card-icon {
+    -fx-opacity: 0.5;
 }
 
-/* 뒤로가기 버튼 (확대) */
+.card-used .card-name {
+    -fx-text-fill: #333333;
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.card-used:hover {
+    -fx-effect: 
+        innershadow(gaussian, rgba(0, 0, 0, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8) !important;
+}
+
+/* USED 스탬프 */
+.used-stamp {
+    -fx-font-size: 32px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #cc0000;
+    -fx-border-color: #cc0000;
+    -fx-border-width: 4px;
+    -fx-border-radius: 6px;
+    -fx-background-color: transparent;
+    -fx-padding: 8 15;
+    -fx-opacity: 0.8;
+    -fx-rotate: -15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 2, 2);
+}
+
+/* 뒤로가기 버튼 */
 .back-to-menu-button {
-    -fx-font-size: 18px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-background-color: #FF5722;
-    -fx-text-fill: white;
-    -fx-background-radius: 12px;
-    -fx-padding: 15 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-background-color: linear-gradient(to bottom, #74c69d 0%, #52b788 100%);
+    -fx-text-fill: #1e5128;
+    -fx-background-radius: 8px;
+    -fx-border-color: #2d6a4f;
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-padding: 12 25;
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.3), 10, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 4);
     -fx-cursor: hand;
 }
 
 .back-to-menu-button:hover {
-    -fx-background-color: #E64A19;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 7, 0, 0, 3);
+    -fx-background-color: linear-gradient(to bottom, #95d5b2 0%, #74c69d 100%);
+    -fx-effect: 
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 12, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0, 0, 6);
 }
 
 /* 바둑판 스타일 */
 .board-grid {
-    -fx-background-color: #2F4F2F; /* 어두운 녹색 테두리 */
-    -fx-padding: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 2); /* 테두리 그림자로 입체감 */
-    -fx-background-radius: 5;
+    -fx-background-color: #1e5128;
+    -fx-padding: 10;
+    -fx-border-color: #d4a024;
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: 
+        innershadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.7), 15, 0, 0, 5);
 }
 
 /* 타일 스타일은 JavaFX에서 동적으로 생성되므로 CSS로는 제한적 */
