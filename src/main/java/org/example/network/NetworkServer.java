@@ -90,6 +90,18 @@ public class NetworkServer {
                 player1.sendMessage(moveData);
             }
         }
+        
+        /**
+         * 랜덤 수 처리 요청 (미니게임 성공 시)
+         */
+        public void executeRandomMove(ClientHandler requester) {
+            // 요청한 플레이어의 상대방에게 랜덤 수 실행 알림
+            if (requester == player1) {
+                player2.sendMessage("RANDOM_MOVE_EXECUTED");
+            } else if (requester == player2) {
+                player1.sendMessage("RANDOM_MOVE_EXECUTED");
+            }
+        }
 
         public void startGame() {
             // 흑돌(Player1)에게는 'START_BLACK opponentId', 백돌(Player2)에게는 'START_WHITE opponentId' 메시지를 보냅니다.
@@ -140,8 +152,20 @@ public class NetworkServer {
                         userId = inputLine.substring(8);
                         System.out.println("User ID received: " + userId);
                     } else if (room != null) {
-                        // F-11: 받은 수를 같은 방의 상대방에게 중계합니다.
-                        room.broadcastMove(this, inputLine);
+                        // 미니게임 메시지 처리
+                        if (inputLine.startsWith("MINIGAME_START") || 
+                            inputLine.startsWith("MINIGAME_UPDATE") ||
+                            inputLine.startsWith("MINIGAME_RESULT") ||
+                            inputLine.startsWith("MINIGAME_CLOSE")) {
+                            // 미니게임 메시지는 상대방에게 중계
+                            room.broadcastMove(this, inputLine);
+                        } else if (inputLine.equals("RANDOM_MOVE")) {
+                            // 랜덤 수 요청 처리
+                            room.executeRandomMove(this);
+                        } else {
+                            // F-11: 받은 수를 같은 방의 상대방에게 중계합니다.
+                            room.broadcastMove(this, inputLine);
+                        }
                     }
                 }
             } catch (IOException e) {

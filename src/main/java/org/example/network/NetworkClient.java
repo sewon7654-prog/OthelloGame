@@ -90,6 +90,33 @@ public class NetworkClient extends Thread {
             out.println("MOVE " + x + " " + y);
         }
     }
+    
+    /**
+     * 미니게임 시작 알림 전송
+     */
+    public void sendMinigameStart(String message) {
+        if (out != null) {
+            out.println(message);
+        }
+    }
+    
+    /**
+     * 미니게임 결과 전송
+     */
+    public void sendMinigameResult(String message) {
+        if (out != null) {
+            out.println(message);
+        }
+    }
+    
+    /**
+     * 랜덤 수 요청 (미니게임 성공 시)
+     */
+    public void requestRandomMove() {
+        if (out != null) {
+            out.println("RANDOM_MOVE");
+        }
+    }
 
     /**
      * F-11: 서버로부터 메시지를 수신하고 게임에 반영합니다.
@@ -117,6 +144,22 @@ public class NetworkClient extends Thread {
                         int y = Integer.parseInt(parts[2]);
                         gameView.processOpponentMove(x, y);
                     }
+                }
+                else if (serverResponse.startsWith("MINIGAME_START")) {
+                    // 상대방이 미니게임 시작
+                    String[] parts = serverResponse.split(" ");
+                    if (parts.length >= 2) {
+                        String gameType = parts[1];
+                        gameView.showMinigameSpectator(gameType);
+                    }
+                }
+                else if (serverResponse.startsWith("MINIGAME_RESULT")) {
+                    // 상대방의 미니게임 결과
+                    // 필요시 처리 (현재는 랜덤 수로 처리됨)
+                }
+                else if (serverResponse.equals("RANDOM_MOVE_EXECUTED")) {
+                    // 내 턴이 랜덤으로 처리됨
+                    gameView.handleRandomMove();
                 }
             }
         } catch (IOException e) {

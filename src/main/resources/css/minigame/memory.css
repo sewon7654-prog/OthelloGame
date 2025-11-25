@@ -1,0 +1,309 @@
+/* ============================================
+   MEMORY GAME - 레트로 클래식 스타일
+   폰트: Cinzel (제목), Orbitron (본문)
+   
+   폴백 폰트:
+   - Cinzel → Times New Roman, Georgia (세리프)
+   - Orbitron → Consolas, Courier New (모노스페이스)
+   ============================================ */
+
+/* ========== 게임 루트 ========== */
+.memory-game-root {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 60%, #1a4d2e 0%, #0f2818 100%);
+    -fx-padding: 20px;
+    -fx-border-color: #8b6f3f;
+    -fx-border-width: 6px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 50, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 60, 0, 0, 20);
+}
+
+/* ========== 헤더 컨테이너 ========== */
+.memory-header {
+    -fx-background-color: linear-gradient(to bottom, #2d6a4f 0%, #1e5128 50%, #2d6a4f 100%);
+    -fx-border-color: #c9a050;
+    -fx-border-width: 6px;
+    -fx-border-style: solid;
+    -fx-padding: 20px;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 40, 0, 0, 15);
+}
+
+/* ========== 제목 (Cinzel 폰트 + 그라데이션 효과) ========== */
+.memory-game-title {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 그라데이션 느낌의 다층 그림자 */
+    -fx-effect: dropshadow(gaussian, rgba(201, 160, 80, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(139, 111, 63, 0.3), 0, 0, 2, 2),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.6), 20, 0, 0, 0);
+}
+
+/* ========== 정보 패널 ========== */
+.memory-info-panel {
+    -fx-spacing: 15;
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+
+/* ========== 통계 박스 (Orbitron 폰트) ========== */
+.memory-stat-box {
+    -fx-background-color: linear-gradient(to bottom, #3d7a5a 0%, #2d6a4f 100%);
+    -fx-padding: 10px 20px;
+    -fx-border-color: #c9a050;
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
+}
+
+.memory-stat-title {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 밝은 크림색 글로우 */
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 5, 0, 0, 0);
+}
+
+/* 통계 값 (MOVES, MATCHES, TIME 숫자) */
+.memory-stat-value,
+.memory-moves-value,
+.memory-pairs-value,
+.memory-time-value {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 글로우 효과로 그라데이션 느낌 */
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.3), 8, 0, 0, 0);
+}
+
+/* 시간 경고 (10초 이하) */
+.memory-time-value-warning {
+    -fx-text-fill: #ff6b6b;
+    -fx-effect: dropshadow(gaussian, rgba(255, 107, 107, 0.8), 15, 0, 0, 0);
+}
+
+/* ========== 카드 그리드 ========== */
+.memory-card-grid {
+    -fx-hgap: 12;
+    -fx-vgap: 12;
+    -fx-alignment: center;
+    -fx-padding: 25px;
+    -fx-background-color: #1a3d2e;
+    -fx-border-color: #c9a050;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 0);
+}
+
+/* ========== 카드 스타일 ========== */
+.memory-card {
+    -fx-pref-width: 100;
+    -fx-pref-height: 100;
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+}
+
+/* ========== 카드 뒷면 (Cinzel 폰트 + 그라데이션 텍스트) ========== */
+.memory-card-back {
+    -fx-background-color: linear-gradient(to bottom, #2d6a4f 0%, #1e5128 50%, #2d6a4f 100%);
+    -fx-text-fill: #f4e5b7;
+    -fx-border-color: #8b6f3f;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 56px;
+    -fx-font-weight: bold;
+    /* 카드 뒷면 "?" 글자에 글로우 그라데이션 */
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 12, 0, 0, 4),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.6), 20, 0.5, 0, 0);
+}
+
+.memory-card-back:hover {
+    -fx-border-color: #c9a050;
+    -fx-translate-y: -3;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.7), 18, 0, 0, 8);
+}
+
+/* ========== 카드 앞면 (심볼 + 그라데이션 텍스트) ========== */
+.memory-card-front {
+    -fx-background-color: linear-gradient(to bottom, #3d7a5a 0%, #2d6a4f 100%);
+    -fx-text-fill: #f4e5b7;
+    -fx-border-color: #c9a050;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 56px;
+    -fx-font-weight: bold;
+    /* 심볼 글자에 강한 글로우 그라데이션 */
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.4), 20, 0, 0, 0),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.8), 30, 0.4, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.5), 15, 0, 0, 0);
+}
+
+/* ========== 카드 매칭 성공 (펄스 애니메이션은 Java 코드에서 구현) ========== */
+.memory-card-matched {
+    -fx-background-color: linear-gradient(to bottom, #4a9570 0%, #3d7a5a 100%);
+    -fx-text-fill: #f4e5b7;
+    -fx-border-color: #c9a050;
+    -fx-border-width: 5px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.8), 25, 0, 0, 0);
+}
+
+/* ========== 버튼 패널 ========== */
+.memory-button-panel {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+/* ========== 버튼 스타일 (Orbitron 폰트 + 그라데이션 배경) ========== */
+.memory-start-button {
+    -fx-background-color: linear-gradient(to bottom, #f4e5b7 0%, #c9a050 100%);
+    -fx-text-fill: #1e5128;
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 16px 35px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: #8b6f3f;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-cursor: hand;
+    /* 버튼 텍스트에 은은한 그림자 */
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 6),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 6);
+}
+
+.memory-start-button:hover {
+    -fx-translate-y: -3;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 9),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.6), 25, 0, 0, 9);
+}
+
+.memory-start-button:pressed {
+    -fx-translate-y: 2;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 2);
+}
+
+.memory-reset-button {
+    -fx-background-color: linear-gradient(to bottom, #f4e5b7 0%, #c9a050 100%);
+    -fx-text-fill: #1e5128;
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 16px 35px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: #8b6f3f;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-cursor: hand;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 6),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 6);
+}
+
+.memory-reset-button:hover {
+    -fx-translate-y: -3;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #2a3a2f, 0, 0, 0, 9),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.6), 25, 0, 0, 9);
+}
+
+.memory-reset-button:pressed {
+    -fx-translate-y: 2;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2),
+                dropshadow(gaussian, #2a3a2f, 0, 0, 0, 2);
+}
+
+/* ========== 지시사항 (Orbitron 폰트 + 글로우) ========== */
+.memory-instruction {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 상태 메시지 글로우 효과 */
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.4), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.3), 8, 0, 0, 0);
+}
+
+/* ========== 결과 오버레이 ========== */
+.memory-result-overlay {
+    -fx-background-color: rgba(15, 40, 24, 0.95);
+    -fx-border-color: #c9a050;
+    -fx-border-width: 8px;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 50, 0, 0, 0);
+}
+
+.memory-result-label-success {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 성공 텍스트 강한 글로우 */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.8), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.6), 20, 0, 0, 0);
+}
+
+.memory-result-label-fail {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff6b6b;
+    /* 실패 텍스트 빨간 글로우 */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(255, 107, 107, 0.8), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(238, 51, 51, 0.5), 15, 0, 0, 0);
+}
+
+.memory-result-score {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    /* 점수 텍스트 글로우 */
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 12, 0, 0, 0),
+                dropshadow(gaussian, rgba(201, 160, 80, 0.3), 8, 0, 0, 0);
+}
+
+.memory-result-time {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c9a050;
+    /* 시간 텍스트 글로우 */
+    -fx-effect: dropshadow(gaussian, rgba(201, 160, 80, 0.4), 10, 0, 0, 0);
+}
+
+/* ========== 관전 모드 ========== */
+.memory-spectator-label {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-background-color: linear-gradient(to bottom, #8b6f3f 0%, #6b5530 100%);
+    -fx-padding: 10px 25px;
+    -fx-border-color: #c9a050;
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
+}

@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class GameView {
 
-    private static final int TILE_SIZE = 70;
+    private static final int TILE_SIZE = 85;
     private static final int WIDTH = 8;
 
     // Core Game Components
@@ -58,6 +58,40 @@ public class GameView {
     private Runnable onBackToMenu;
     private VBox matchingScreen; // 매칭 중 화면
     private Label matchingLabel; // 매칭 상태 표시 레이블
+    
+    // 커스텀 폰트
+    private static javafx.scene.text.Font cinzelFont;
+    private static javafx.scene.text.Font orbitronFont;
+    
+    // 찬스카드 관련
+    private VBox memoryCard; // 기억력 카드
+    private VBox reactionCard; // 반응속도 카드
+    private VBox dodgeCard; // 회피 카드
+    private boolean[] cardUsed = new boolean[3]; // 카드 사용 여부
+
+    static {
+        try {
+            // Cinzel - 제목용 (세리프 폰트, 로마 비문 스타일)
+            cinzelFont = javafx.scene.text.Font.loadFont(
+                GameView.class.getResourceAsStream("/fonts/Cinzel-Bold.ttf"), 24
+            );
+            
+            // Orbitron - 본문용 (기하학적 레트로 폰트)
+            orbitronFont = javafx.scene.text.Font.loadFont(
+                GameView.class.getResourceAsStream("/fonts/Orbitron-Bold.ttf"), 18
+            );
+            
+            if (cinzelFont == null || orbitronFont == null) {
+                System.err.println("[폰트 로드] 커스텀 폰트 로드 실패, 기본 폰트 사용");
+                cinzelFont = javafx.scene.text.Font.font("Times New Roman", javafx.scene.text.FontWeight.BOLD, 24);
+                orbitronFont = javafx.scene.text.Font.font("Consolas", javafx.scene.text.FontWeight.BOLD, 18);
+            }
+        } catch (Exception e) {
+            System.err.println("[폰트 로드] 오류: " + e.getMessage());
+            cinzelFont = javafx.scene.text.Font.font("Times New Roman", javafx.scene.text.FontWeight.BOLD, 24);
+            orbitronFont = javafx.scene.text.Font.font("Consolas", javafx.scene.text.FontWeight.BOLD, 18);
+        }
+    }
 
     public GameView(Stage stage, GameModel model, AIPlayer aiPlayer) {
         this.primaryStage = stage;
@@ -129,20 +163,14 @@ public class GameView {
             case AI -> "AI 대전";
         };
         modeLabel.setText(modeText);
+        modeLabel.setFont(cinzelFont);
         modeLabel.getStyleClass().add("mode-label");
         
         VBox topPanel = new VBox(8);
-        topPanel.setPadding(new Insets(15));
+        topPanel.setPadding(new Insets(12));
         topPanel.setAlignment(Pos.CENTER);
         topPanel.getStyleClass().add("game-top-panel");
         topPanel.getChildren().addAll(modeLabel, scoreLabel);
-
-        // 하단 패널 (점수 및 버튼)
-        HBox bottomPanel = new HBox(15);
-        bottomPanel.setPadding(new Insets(15));
-        bottomPanel.setAlignment(Pos.CENTER);
-        bottomPanel.getStyleClass().add("game-bottom-panel");
-        bottomPanel.getChildren().add(backButton);
 
         // 보드를 중앙 정렬하기 위한 컨테이너
         StackPane boardContainer = new StackPane();
@@ -152,8 +180,20 @@ public class GameView {
         mainLayout = new BorderPane();
         mainLayout.setTop(topPanel);
         mainLayout.setCenter(boardContainer);
-        mainLayout.setBottom(bottomPanel);
         mainLayout.getStyleClass().add("game-container");
+        
+        // 로컬/온라인 모드: 찬스카드를 오른쪽에 배치
+        if (mode == GameModel.Mode.LOCAL || mode == GameModel.Mode.ONLINE) {
+            VBox rightPanel = createRightPanel(backButton);
+            mainLayout.setRight(rightPanel);
+        } else {
+            // AI 모드: 버튼만 하단에 표시
+            HBox bottomPanel = new HBox();
+            bottomPanel.setPadding(new Insets(15));
+            bottomPanel.setAlignment(Pos.CENTER);
+            bottomPanel.getChildren().add(backButton);
+            mainLayout.setBottom(bottomPanel);
+        }
 
         // AI 모드 선공일 경우 바로 AI 턴 시작
         if (mode == GameModel.Mode.AI && gameModel.getCurrentTurn() == gameModel.getAIColor()) {
@@ -164,7 +204,12 @@ public class GameView {
         drawValidMoves();
         updateScoreDisplay();
 
-        Scene gameScene = new Scene(mainLayout, WIDTH * TILE_SIZE + 40, WIDTH * TILE_SIZE + 180);
+        // 화면 크기 최적화 (화면에 맞게)
+        int boardSize = WIDTH * TILE_SIZE + 20; // 680 + 20 = 700
+        int rightPanelWidth = 280; // 오른쪽 패널
+        int sceneWidth = boardSize + rightPanelWidth + 40; // 700 + 280 + 40 = 1020
+        int sceneHeight = boardSize + 180; // 700 + 180 = 880
+        Scene gameScene = new Scene(mainLayout, sceneWidth, sceneHeight);
         gameScene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         gameScene.getStylesheets().add(getClass().getResource("/css/game.css").toExternalForm());
         primaryStage.setScene(gameScene);
@@ -578,12 +623,14 @@ public class GameView {
 
         if (gameModel.isGameOver()) {
             scoreLabel.setText("🎮 게임 종료 | " + getWinnerMessage());
+            scoreLabel.setFont(cinzelFont);
             scoreLabel.getStyleClass().clear();
             scoreLabel.getStyleClass().add("score-label-game-over");
             // 게임 종료 사운드 재생
             soundService.playGameOverSound();
         } else {
             scoreLabel.setText(String.format("⚫ 흑: %d  ⚪ 백: %d  |  현재 턴: %s", black, white, turn));
+            scoreLabel.setFont(orbitronFont);
             scoreLabel.getStyleClass().clear();
             scoreLabel.getStyleClass().add("score-label");
         }
@@ -721,6 +768,307 @@ public class GameView {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+    
+    /**
+     * 오른쪽 사이드바 패널 생성 (카드 + 버튼)
+     */
+    private VBox createRightPanel(Button backButton) {
+        VBox rightPanel = new VBox(18);
+        rightPanel.setPadding(new Insets(15));
+        rightPanel.setAlignment(Pos.CENTER);
+        rightPanel.getStyleClass().add("right-panel");
+        
+        // 카드 제목
+        Label cardTitle = new Label("🎴 찬스카드");
+        cardTitle.setFont(cinzelFont);
+        cardTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFD700;");
+        
+        // 기억력 게임 카드
+        memoryCard = createSingleCard("🧠", "기억력", "MEMORY", 0);
+        
+        // 반응속도 게임 카드
+        reactionCard = createSingleCard("⚡", "반응속도", "REACTION", 1);
+        
+        // 회피 게임 카드
+        dodgeCard = createSingleCard("🎯", "회피게임", "DODGE", 2);
+        
+        // 구분선
+        Region spacer = new Region();
+        spacer.setPrefHeight(20);
+        
+        rightPanel.getChildren().addAll(
+            cardTitle,
+            memoryCard, 
+            reactionCard, 
+            dodgeCard,
+            spacer,
+            backButton
+        );
+        
+        return rightPanel;
+    }
+    
+    /**
+     * 단일 카드 생성
+     */
+    private VBox createSingleCard(String icon, String name, String gameType, int cardIndex) {
+        VBox card = new VBox(12);
+        card.setAlignment(Pos.CENTER);
+        card.setPrefSize(160, 180);
+        card.getStyleClass().add("game-card");
+        
+        // 카드 이미지 또는 아이콘
+        javafx.scene.Node cardIcon;
+        try {
+            // 이미지 파일 경로 설정
+            String imagePath = "/images/cards/" + gameType.toLowerCase() + ".png";
+            java.io.InputStream imageStream = getClass().getResourceAsStream(imagePath);
+            
+            if (imageStream != null) {
+                // 이미지가 존재하면 ImageView 사용
+                javafx.scene.image.Image image = new javafx.scene.image.Image(imageStream);
+                javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(image);
+                imageView.setFitWidth(100);
+                imageView.setFitHeight(100);
+                imageView.setPreserveRatio(true);
+                cardIcon = imageView;
+            } else {
+                // 이미지가 없으면 이모지 사용 (폴백)
+                Label iconLabel = new Label(icon);
+                iconLabel.getStyleClass().add("card-icon");
+                iconLabel.setStyle("-fx-font-size: 60px;");
+                cardIcon = iconLabel;
+            }
+        } catch (Exception e) {
+            // 오류 발생 시 이모지 사용
+            Label iconLabel = new Label(icon);
+            iconLabel.getStyleClass().add("card-icon");
+            iconLabel.setStyle("-fx-font-size: 60px;");
+            cardIcon = iconLabel;
+        }
+        
+        // 카드 이름
+        Label nameLabel = new Label(name);
+        nameLabel.getStyleClass().add("card-name");
+        nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        
+        card.getChildren().addAll(cardIcon, nameLabel);
+        
+        // 클릭 이벤트
+        card.setOnMouseClicked(e -> {
+            if (!cardUsed[cardIndex]) {
+                useChanceCard(gameType, cardIndex);
+            }
+        });
+        
+        // 호버 효과
+        card.setOnMouseEntered(e -> {
+            if (!cardUsed[cardIndex]) {
+                card.setStyle("-fx-scale-x: 1.05; -fx-scale-y: 1.05;");
+            }
+        });
+        card.setOnMouseExited(e -> {
+            card.setStyle("-fx-scale-x: 1.0; -fx-scale-y: 1.0;");
+        });
+        
+        return card;
+    }
+    
+    /**
+     * 찬스카드 사용
+     */
+    private void useChanceCard(String gameType, int cardIndex) {
+        if (cardUsed[cardIndex]) {
+            showAlert("카드 사용됨", "이미 사용한 카드입니다!");
+            return;
+        }
+        
+        if (gameModel.isGameOver()) {
+            showAlert("게임 종료", "게임이 이미 종료되었습니다!");
+            return;
+        }
+        
+        // 온라인 모드: 상대방 턴일 때만 사용 가능
+        if (gameModel.getGameMode() == GameModel.Mode.ONLINE) {
+            int currentTurn = gameModel.getCurrentTurn();
+            if (currentTurn == myColor) {
+                showAlert("사용 불가", "상대방의 턴일 때만 찬스카드를 사용할 수 있습니다!");
+                return;
+            }
+        }
+        
+        // 카드 사용 처리
+        cardUsed[cardIndex] = true;
+        updateCardAppearance(cardIndex);
+        
+        // 미니게임 실행
+        startMinigame(gameType);
+    }
+    
+    /**
+     * 카드 외관 업데이트 (사용된 카드)
+     */
+    private void updateCardAppearance(int cardIndex) {
+        VBox card = null;
+        switch (cardIndex) {
+            case 0: card = memoryCard; break;
+            case 1: card = reactionCard; break;
+            case 2: card = dodgeCard; break;
+        }
+        
+        if (card != null) {
+            card.setOpacity(0.3);
+            card.setDisable(true);
+            card.getStyleClass().add("card-used");
+        }
+    }
+    
+    /**
+     * 미니게임 시작
+     */
+    private void startMinigame(String gameType) {
+        org.example.minigame.base.MinigameBase minigame = null;
+        
+        switch (gameType) {
+            case "MEMORY":
+                minigame = new org.example.minigame.games.memory.MemoryGame();
+                break;
+            case "REACTION":
+                minigame = new org.example.minigame.games.reaction.ReactionGame();
+                break;
+            case "DODGE":
+                minigame = new org.example.minigame.games.dodge.DodgeGame();
+                break;
+            default:
+                showAlert("오류", "알 수 없는 게임 타입입니다.");
+                return;
+        }
+        
+        // 온라인 모드: 상대방에게 관전 모드 알림
+        if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+            String startMessage = org.example.minigame.network.MinigameProtocol.createStartMessage(gameType);
+            networkClient.sendMinigameStart(startMessage);
+        }
+        
+        minigame.startPlayerMode(primaryStage, result -> {
+            // 미니게임 결과 처리
+            if (result.isSuccess()) {
+                handleMinigameSuccess(result);
+            } else {
+                showAlert("미니게임 실패", 
+                    "아쉽게도 미니게임에 실패했습니다.\n" +
+                    "점수: " + result.getScore() + "\n" +
+                    "다음 기회에 도전하세요!");
+                
+                // 온라인 모드: 결과 전송
+                if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+                    String resultMessage = org.example.minigame.network.MinigameProtocol
+                        .createResultMessage(false, result.getScore(), result.getTimeElapsed());
+                    networkClient.sendMinigameResult(resultMessage);
+                }
+            }
+        });
+    }
+    
+    /**
+     * 미니게임 성공 처리
+     */
+    private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result) {
+        showAlert("미니게임 성공!", 
+            "축하합니다! 미니게임에 성공했습니다!\n" +
+            "점수: " + result.getScore() + "\n" +
+            "소요 시간: " + result.getTimeElapsed() + "초\n\n" +
+            "찬스 효과: 상대방의 다음 턴을 랜덤으로 둡니다!");
+        
+        // 온라인 모드: 결과 전송 및 상대방 턴 랜덤 처리
+        if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+            String resultMessage = org.example.minigame.network.MinigameProtocol
+                .createResultMessage(true, result.getScore(), result.getTimeElapsed());
+            networkClient.sendMinigameResult(resultMessage);
+            
+            // 상대방 턴을 랜덤으로 처리하도록 서버에 요청
+            networkClient.requestRandomMove();
+        } else {
+            // 로컬 모드: 한 턴 스킵 (현재 턴 유지)
+            // 현재 플레이어가 다시 놓을 수 있음
+        }
+    }
+    
+    /**
+     * 상대방이 미니게임을 시작했을 때 관전 모드 표시
+     */
+    public void showMinigameSpectator(String gameType) {
+        Platform.runLater(() -> {
+            org.example.minigame.base.MinigameBase minigame = null;
+            
+            switch (gameType) {
+                case "MEMORY":
+                    minigame = new org.example.minigame.games.memory.MemoryGame();
+                    break;
+                case "REACTION":
+                    minigame = new org.example.minigame.games.reaction.ReactionGame();
+                    break;
+                case "DODGE":
+                    minigame = new org.example.minigame.games.dodge.DodgeGame();
+                    break;
+                default:
+                    return;
+            }
+            
+            minigame.startSpectatorMode(primaryStage);
+        });
+    }
+    
+    /**
+     * 미니게임 성공으로 인한 랜덤 수 처리
+     */
+    public void handleRandomMove() {
+        Platform.runLater(() -> {
+            List<int[]> validMoves = gameModel.getValidMoves();
+            if (validMoves.isEmpty()) {
+                // 유효한 수가 없으면 턴 패스
+                gameModel.switchTurn();
+                drawBoard();
+                updateScoreDisplay();
+                return;
+            }
+            
+            // 랜덤으로 하나 선택
+            java.util.Random random = new java.util.Random();
+            int[] randomMove = validMoves.get(random.nextInt(validMoves.size()));
+            
+            // 자동으로 수 놓기
+            gameModel.placePieceAndFlip(randomMove[0], randomMove[1]);
+            drawBoard();
+            updateScoreDisplay();
+            
+            // 게임 종료 확인
+            if (gameModel.isGameOver()) {
+                handleGameOver();
+            }
+        });
+    }
+    
+    /**
+     * 게임 종료 처리
+     */
+    private void handleGameOver() {
+        int blackScore = gameModel.getScore(1); // 1 = BLACK
+        int whiteScore = gameModel.getScore(2); // 2 = WHITE
+        
+        String winner;
+        if (blackScore > whiteScore) {
+            winner = "흑돌 승리!";
+        } else if (whiteScore > blackScore) {
+            winner = "백돌 승리!";
+        } else {
+            winner = "무승부!";
+        }
+        
+        showAlert("게임 종료", 
+            winner + "\n\n" +
+            "흑: " + blackScore + " vs 백: " + whiteScore);
     }
 }
 
