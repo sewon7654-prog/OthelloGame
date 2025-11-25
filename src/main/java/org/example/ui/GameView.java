@@ -1127,7 +1127,8 @@ public class GameView {
 
     public void showMinigameSpectator(String gameType) {
         Platform.runLater(() -> {
-            minigameOwnerColor = gameModel.getCurrentTurn();
+            // 상대가 미니게임을 시작했으므로 관전자는 상대 색을 owner로 기록
+            minigameOwnerColor = (myColor == 1) ? 2 : 1;
             org.example.minigame.base.MinigameBase minigame;
             switch (gameType) {
                 case "MEMORY" -> minigame = new org.example.minigame.games.memory.MemoryGame();
@@ -1152,7 +1153,7 @@ public class GameView {
                 activeMinigame.closeGame();
                 activeMinigame = null;
             }
-            int ownerColor = minigameOwnerColor != 0 ? minigameOwnerColor : (gameModel.getCurrentTurn() == 1 ? 2 : 1);
+            int ownerColor = minigameOwnerColor != 0 ? minigameOwnerColor : (myColor == 1 ? 2 : 1);
             int opponentColor = ownerColor == 1 ? 2 : 1;
             if (success) {
                 int[] move = (forcedX >= 0 && forcedY >= 0) ? new int[]{forcedX, forcedY} : pickRandomMoveFor(opponentColor);
