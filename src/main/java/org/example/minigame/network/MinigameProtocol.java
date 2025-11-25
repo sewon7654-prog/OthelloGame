@@ -31,8 +31,16 @@ public class MinigameProtocol {
      * 형식: MINIGAME_RESULT SUCCESS 10 45
      */
     public static String createResultMessage(boolean success, int score, long time) {
+        return createResultMessage(success, score, time, -1, -1);
+    }
+    
+    /**
+     * 미니게임 결과 메시지 (강제 수 좌표 포함 버전)
+     * 형식: MINIGAME_RESULT SUCCESS 10 45 3 4
+     */
+    public static String createResultMessage(boolean success, int score, long time, int forcedX, int forcedY) {
         String status = success ? "SUCCESS" : "FAIL";
-        return MINIGAME_RESULT + " " + status + " " + score + " " + time;
+        return MINIGAME_RESULT + " " + status + " " + score + " " + time + " " + forcedX + " " + forcedY;
     }
     
     /**

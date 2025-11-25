@@ -116,8 +116,21 @@ public class GameModel {
         return validMoves;
     }
 
+    // ?�정???�어�?용 가??자리 ???�기 (미니게임 ?�득 시 강제 ?�로 ???�음)
+    public List<int[]> getValidMovesFor(int player) {
+        int originalTurn = currentTurn;
+        currentTurn = player;
+        List<int[]> moves = getValidMoves();
+        currentTurn = originalTurn;
+        return moves;
+    }
+
     public void switchTurn() {
         currentTurn = (currentTurn == 1) ? 2 : 1;
+    }
+
+    public void setCurrentTurn(int turn) {
+        this.currentTurn = turn;
     }
 
     public int getScore(int player) {

@@ -68,6 +68,8 @@ public class GameView {
     private VBox reactionCard; // 반응속도 카드
     private VBox dodgeCard; // 회피 카드
     private boolean[] cardUsed = new boolean[3]; // 카드 사용 여부
+    private org.example.minigame.base.MinigameBase activeMinigame;
+    private int minigameOwnerColor = 0;
 
     static {
         try {
@@ -186,6 +188,7 @@ public class GameView {
         if (mode == GameModel.Mode.LOCAL || mode == GameModel.Mode.ONLINE) {
             VBox rightPanel = createRightPanel(backButton);
             mainLayout.setRight(rightPanel);
+            resetChanceCards();
         } else {
             // AI 모드: 버튼만 하단에 표시
             HBox bottomPanel = new HBox();
@@ -1017,135 +1020,193 @@ public class GameView {
         }
     }
     
+    private void resetChanceCards() {
+        cardUsed = new boolean[]{false, false, false};
+        resetSingleCard(memoryCard);
+        resetSingleCard(reactionCard);
+        resetSingleCard(dodgeCard);
+    }
+
+    private void resetSingleCard(VBox wrapper) {
+        if (wrapper == null || !(wrapper.getUserData() instanceof CardData data)) {
+            return;
+        }
+
+        javafx.scene.layout.StackPane cardStack = data.cardStack;
+        cardStack.setDisable(false);
+        data.iconLabel.setOpacity(1.0);
+        data.iconLabel.setTranslateY(0);
+        if (data.floatAnimation != null) {
+            data.floatAnimation.stop();
+            data.floatAnimation.playFromStart();
+        }
+
+        if (cardStack.getChildren().size() > 0 && cardStack.getChildren().get(0) instanceof VBox) {
+            VBox card = (VBox) cardStack.getChildren().get(0);
+            card.getStyleClass().remove("card-used");
+        }
+
+        cardStack.getChildren().removeIf(node ->
+            (node instanceof Label && "USED".equals(((Label) node).getText())) ||
+            (node.getStyleClass() != null && node.getStyleClass().contains("used-stamp"))
+        );
+    }
+
     /**
      * 미니게임 시작
      */
     private void startMinigame(String gameType) {
-        org.example.minigame.base.MinigameBase minigame = null;
-        
+        minigameOwnerColor = gameModel.getCurrentTurn();
+        org.example.minigame.base.MinigameBase minigame;
         switch (gameType) {
-            case "MEMORY":
-                minigame = new org.example.minigame.games.memory.MemoryGame();
-                break;
-            case "REACTION":
-                minigame = new org.example.minigame.games.reaction.ReactionGame();
-                break;
-            case "DODGE":
-                minigame = new org.example.minigame.games.dodge.DodgeGame();
-                break;
-            default:
-                showAlert("오류", "알 수 없는 게임 타입입니다.");
+            case "MEMORY" -> minigame = new org.example.minigame.games.memory.MemoryGame();
+            case "REACTION" -> minigame = new org.example.minigame.games.reaction.ReactionGame();
+            case "DODGE" -> minigame = new org.example.minigame.games.dodge.DodgeGame();
+            default -> {
+                showAlert("오류", "지원하지 않는 게임 타입입니다.");
                 return;
+            }
         }
-        
-        // 온라인 모드: 상대방에게 관전 모드 알림
+
         if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
             String startMessage = org.example.minigame.network.MinigameProtocol.createStartMessage(gameType);
             networkClient.sendMinigameStart(startMessage);
         }
-        
+
+        activeMinigame = minigame;
+        if (minigame instanceof org.example.minigame.games.memory.MemoryGame memoryGame &&
+            gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+            memoryGame.setUpdatePublisher(state ->
+                networkClient.sendMinigameUpdate(
+                    org.example.minigame.network.MinigameProtocol.createUpdateMessage(state)
+                )
+            );
+        }
+
         minigame.startPlayerMode(primaryStage, result -> {
-            // 미니게임 결과 처리
+            activeMinigame = null;
             if (result.isSuccess()) {
-                handleMinigameSuccess(result);
+                handleMinigameSuccess(result, minigameOwnerColor);
             } else {
-                showAlert("미니게임 실패", 
+                showAlert("미니게임 실패",
                     "아쉽게도 미니게임에 실패했습니다.\n" +
                     "점수: " + result.getScore() + "\n" +
-                    "다음 기회에 도전하세요!");
-                
-                // 온라인 모드: 결과 전송
+                    "다음 기회를 노려보세요.");
+
                 if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
                     String resultMessage = org.example.minigame.network.MinigameProtocol
-                        .createResultMessage(false, result.getScore(), result.getTimeElapsed());
+                        .createResultMessage(false, result.getScore(), result.getTimeElapsed(), -1, -1);
                     networkClient.sendMinigameResult(resultMessage);
                 }
             }
+            minigameOwnerColor = 0;
         });
     }
-    
-    /**
-     * 미니게임 성공 처리
-     */
-    private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result) {
-        showAlert("미니게임 성공!", 
-            "축하합니다! 미니게임에 성공했습니다!\n" +
+
+    private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result, int ownerColor) {
+        showAlert("미니게임 성공!",
+            "축하합니다! 미니게임에 성공했습니다.\n" +
             "점수: " + result.getScore() + "\n" +
             "소요 시간: " + result.getTimeElapsed() + "초\n\n" +
-            "찬스 효과: 상대방의 다음 턴을 랜덤으로 둡니다!");
-        
-        // 온라인 모드: 결과 전송 및 상대방 턴 랜덤 처리
+            "찬스 효과: 상대의 돌을 강제 랜덤 수로 둔 뒤 내 턴을 유지합니다.");
+
+        int opponentColor = ownerColor == 1 ? 2 : 1;
+        int[] forcedMove = pickRandomMoveFor(opponentColor);
+        if (forcedMove != null) {
+            applyForcedMove(opponentColor, ownerColor, forcedMove);
+        }
+
         if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
             String resultMessage = org.example.minigame.network.MinigameProtocol
-                .createResultMessage(true, result.getScore(), result.getTimeElapsed());
+                .createResultMessage(true, result.getScore(), result.getTimeElapsed(),
+                        forcedMove != null ? forcedMove[0] : -1,
+                        forcedMove != null ? forcedMove[1] : -1);
             networkClient.sendMinigameResult(resultMessage);
-            
-            // 상대방 턴을 랜덤으로 처리하도록 서버에 요청
-            networkClient.requestRandomMove();
-        } else {
-            // 로컬 모드: 한 턴 스킵 (현재 턴 유지)
-            // 현재 플레이어가 다시 놓을 수 있음
         }
     }
-    
-    /**
-     * 상대방이 미니게임을 시작했을 때 관전 모드 표시
-     */
+
     public void showMinigameSpectator(String gameType) {
         Platform.runLater(() -> {
-            org.example.minigame.base.MinigameBase minigame = null;
-            
+            minigameOwnerColor = gameModel.getCurrentTurn();
+            org.example.minigame.base.MinigameBase minigame;
             switch (gameType) {
-                case "MEMORY":
-                    minigame = new org.example.minigame.games.memory.MemoryGame();
-                    break;
-                case "REACTION":
-                    minigame = new org.example.minigame.games.reaction.ReactionGame();
-                    break;
-                case "DODGE":
-                    minigame = new org.example.minigame.games.dodge.DodgeGame();
-                    break;
-                default:
-                    return;
+                case "MEMORY" -> minigame = new org.example.minigame.games.memory.MemoryGame();
+                case "REACTION" -> minigame = new org.example.minigame.games.reaction.ReactionGame();
+                case "DODGE" -> minigame = new org.example.minigame.games.dodge.DodgeGame();
+                default -> { return; }
             }
-            
+            activeMinigame = minigame;
             minigame.startSpectatorMode(primaryStage);
         });
     }
-    
-    /**
-     * 미니게임 성공으로 인한 랜덤 수 처리
-     */
+
+    public void onMinigameUpdate(String json) {
+        if (activeMinigame != null) {
+            Platform.runLater(() -> activeMinigame.updateFromJson(json));
+        }
+    }
+
+    public void handleMinigameResultFromNetwork(boolean success, int score, long time, int forcedX, int forcedY) {
+        Platform.runLater(() -> {
+            if (activeMinigame != null) {
+                activeMinigame.closeGame();
+                activeMinigame = null;
+            }
+            int ownerColor = minigameOwnerColor != 0 ? minigameOwnerColor : (gameModel.getCurrentTurn() == 1 ? 2 : 1);
+            int opponentColor = ownerColor == 1 ? 2 : 1;
+            if (success) {
+                int[] move = (forcedX >= 0 && forcedY >= 0) ? new int[]{forcedX, forcedY} : pickRandomMoveFor(opponentColor);
+                if (move != null) {
+                    applyForcedMove(opponentColor, ownerColor, move);
+                }
+            } else {
+                gameModel.setCurrentTurn(opponentColor);
+                drawValidMoves();
+            }
+            minigameOwnerColor = 0;
+        });
+    }
+
     public void handleRandomMove() {
         Platform.runLater(() -> {
-            List<int[]> validMoves = gameModel.getValidMoves();
-            if (validMoves.isEmpty()) {
-                // 유효한 수가 없으면 턴 패스
-                gameModel.switchTurn();
+            int moveColor = gameModel.getCurrentTurn();
+            int returnColor = minigameOwnerColor != 0 ? minigameOwnerColor : (moveColor == 1 ? 2 : 1);
+            int[] move = pickRandomMoveFor(moveColor);
+            if (move != null) {
+                applyForcedMove(moveColor, returnColor, move);
+            } else {
+                gameModel.setCurrentTurn(returnColor);
                 drawBoard();
                 updateScoreDisplay();
-                return;
+                drawValidMoves();
             }
-            
-            // 랜덤으로 하나 선택
-            java.util.Random random = new java.util.Random();
-            int[] randomMove = validMoves.get(random.nextInt(validMoves.size()));
-            
-            // 자동으로 수 놓기
-            gameModel.placePieceAndFlip(randomMove[0], randomMove[1]);
-            drawBoard();
-            updateScoreDisplay();
-            
-            // 게임 종료 확인
             if (gameModel.isGameOver()) {
                 handleGameOver();
             }
         });
     }
-    
-    /**
-     * 게임 종료 처리
-     */
+
+    private int[] pickRandomMoveFor(int playerColor) {
+        java.util.List<int[]> validMoves = gameModel.getValidMovesFor(playerColor);
+        if (validMoves == null || validMoves.isEmpty()) {
+            return null;
+        }
+        java.util.Random random = new java.util.Random();
+        return validMoves.get(random.nextInt(validMoves.size()));
+    }
+
+    private void applyForcedMove(int moveColor, int returnTurnColor, int[] move) {
+        gameModel.setCurrentTurn(moveColor);
+        gameModel.placePieceAndFlip(move[0], move[1]);
+        gameModel.setCurrentTurn(returnTurnColor);
+        drawBoard();
+        updateScoreDisplay();
+        drawValidMoves();
+        if (gameModel.isGameOver()) {
+            handleGameOver();
+        }
+    }
+
     private void handleGameOver() {
         int blackScore = gameModel.getScore(1); // 1 = BLACK
         int whiteScore = gameModel.getScore(2); // 2 = WHITE
