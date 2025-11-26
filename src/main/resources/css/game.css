@@ -47,19 +47,19 @@
 
 /* 찬스카드 패널 */
 .chance-card-panel {
-    -fx-spacing: 20;
-    -fx-padding: 10;
+    -fx-spacing: 12;
+    -fx-padding: 6;
 }
 
 /* ============================================
    찬스카드 공통 스타일
    ============================================ */
 .game-card {
-    -fx-border-width: 5px;
+    -fx-border-width: 4px;
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
     -fx-cursor: hand;
-    -fx-padding: 15;
+    -fx-padding: 10;
 }
 
 /* 반응속도 카드 (노란색/금색) */
@@ -207,7 +207,7 @@
 /* 바둑판 스타일 */
 .board-grid {
     -fx-background-color: #1e5128;
-    -fx-padding: 10;
+    -fx-padding: 0;
     -fx-border-color: #d4a024;
     -fx-border-width: 3px;
     -fx-border-radius: 8px;

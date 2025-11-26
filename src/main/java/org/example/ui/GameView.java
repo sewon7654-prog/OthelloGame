@@ -179,6 +179,8 @@ public class GameView {
         StackPane boardContainer = new StackPane();
         boardContainer.setAlignment(Pos.CENTER);
         boardContainer.getChildren().add(boardView);
+        boardContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        BorderPane.setAlignment(boardContainer, Pos.CENTER);
 
         mainLayout = new BorderPane();
         mainLayout.setTop(topPanel);
@@ -374,9 +376,11 @@ public class GameView {
 
     private GridPane createBoardView() {
         GridPane gridPane = new GridPane();
+        this.boardView = gridPane;
         gridPane.getStyleClass().add("board-grid");
-        gridPane.setHgap(2);
-        gridPane.setVgap(2);
+        gridPane.setHgap(0);
+        gridPane.setVgap(0);
+        gridPane.setPadding(Insets.EMPTY);
 
         for (int y = 0; y < WIDTH; y++) {
             for (int x = 0; x < WIDTH; x++) {
@@ -781,8 +785,8 @@ public class GameView {
      * 오른쪽 사이드바 패널 생성 (카드 + 버튼)
      */
     private VBox createRightPanel(Button backButton) {
-        VBox rightPanel = new VBox(15);
-        rightPanel.setPadding(new Insets(20, 15, 20, 15));
+        VBox rightPanel = new VBox(8);
+        rightPanel.setPadding(new Insets(8, 10, 8, 10));
         rightPanel.setAlignment(Pos.CENTER);
         rightPanel.getStyleClass().add("right-panel");
         rightPanel.setMinWidth(220);
@@ -828,12 +832,12 @@ public class GameView {
     private VBox createSingleCard(String icon, String name, String gameType, int cardIndex) {
         // 메인 카드 컨테이너
         javafx.scene.layout.StackPane cardStack = new javafx.scene.layout.StackPane();
-        cardStack.setPrefSize(180, 230);
+        cardStack.setPrefSize(170, 210);
         
         // 카드 배경
-        VBox card = new VBox(18);
+        VBox card = new VBox(12);
         card.setAlignment(Pos.CENTER);
-        card.setPrefSize(180, 230);
+        card.setPrefSize(170, 210);
         card.getStyleClass().addAll("game-card", "card-" + gameType.toLowerCase());
         
         // 장식용 내부 테두리
