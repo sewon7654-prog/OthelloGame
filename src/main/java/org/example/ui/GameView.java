@@ -1068,14 +1068,14 @@ public class GameView {
         // 찬스카드 사용자의 색을 올바르게 저장
         // 찬스카드는 상대방 턴일 때 사용하므로, 찬스카드 사용자는 현재 턴의 반대편
         if (gameModel.getGameMode() == GameModel.Mode.ONLINE) {
-            // Online mode: The person who used the chance card is me (myColor)
+            // 온라인 모드: 찬스카드를 사용한 사람은 나(myColor)
             minigameOwnerColor = myColor;
         } else {
-            // Local mode: Chance card is used during opponent's turn, so the user is the opposite of current turn
+            // 로컬 모드: 상대방 턴일 때 찬스카드 사용하므로, 찬스카드 사용자는 현재 턴의 반대편
             minigameOwnerColor = gameModel.getCurrentTurn() == 1 ? 2 : 1;
         }
-        System.out.println("[Minigame Start] minigameOwnerColor(chance card user): " + minigameOwnerColor + 
-                          ", current turn: " + gameModel.getCurrentTurn());
+        System.out.println("[미니게임 시작] minigameOwnerColor(찬스카드 사용자): " + minigameOwnerColor + 
+                          ", 현재 턴: " + gameModel.getCurrentTurn());
         org.example.minigame.base.MinigameBase minigame;
         switch (gameType) {
             case "MEMORY" -> minigame = new org.example.minigame.games.memory.MemoryGame();
@@ -1123,30 +1123,30 @@ public class GameView {
     }
 
     private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result, int ownerColor) {
-        // Ensure execution on UI thread using Platform.runLater (real-time update)
+        // Platform.runLater로 UI 스레드에서 실행 보장 (실시간 업데이트)
         Platform.runLater(() -> {
-            // 1) Apply advantage first: Force opponent's move + maintain turn
+            // 1) 먼저 이점 적용: 상대 돌 강제 수 + 턴 유지
             int opponentColor = ownerColor == 1 ? 2 : 1;
             
-            // Debug: Check current state
-            System.out.println("[Chance Card Success] ownerColor(chance card user): " + ownerColor + 
-                              ", opponentColor(opponent): " + opponentColor + 
-                              ", current turn: " + gameModel.getCurrentTurn());
+            // 디버깅: 현재 상태 확인
+            System.out.println("[찬스카드 성공] ownerColor(찬스카드 사용자): " + ownerColor + 
+                              ", opponentColor(상대방): " + opponentColor + 
+                              ", 현재 턴: " + gameModel.getCurrentTurn());
             
             int[] forcedMove = pickRandomMoveFor(opponentColor);
             if (forcedMove != null) {
-                System.out.println("[Chance Card Success] Opponent random move: (" + forcedMove[0] + ", " + forcedMove[1] + ")");
+                System.out.println("[찬스카드 성공] 상대방 랜덤 수: (" + forcedMove[0] + ", " + forcedMove[1] + ")");
                 applyForcedMove(opponentColor, ownerColor, forcedMove);
             } else {
-                System.out.println("[Chance Card Success] Opponent has no valid moves.");
-                // If no valid moves, set turn to chance card user only
+                System.out.println("[찬스카드 성공] 상대방의 유효한 수가 없습니다.");
+                // 유효한 수가 없으면 턴만 찬스카드 사용자로 설정
                 gameModel.setCurrentTurn(ownerColor);
                 drawBoard();
                 updateScoreDisplay();
                 drawValidMoves();
             }
 
-            // 2) If online, send result with coordinates
+            // 2) 온라인이면 좌표 포함해 결과 전송
             if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
                 String resultMessage = org.example.minigame.network.MinigameProtocol
                     .createResultMessage(true, result.getScore(), result.getTimeElapsed(),
@@ -1155,12 +1155,12 @@ public class GameView {
                 networkClient.sendMinigameResult(resultMessage);
             }
 
-            // 3) Show notification safely at the end
-            showAlert("Minigame Success!",
-                "Congratulations! You succeeded in the minigame.\n" +
-                "Score: " + result.getScore() + "\n" +
-                "Time elapsed: " + result.getTimeElapsed() + " seconds\n\n" +
-                "Chance effect: Opponent's piece is forced to make a random move, then your turn is maintained.");
+            // 3) 알림은 마지막에 안전하게 표시
+            showAlert("미니게임 성공!",
+                "축하합니다! 미니게임에 성공했습니다.\n" +
+                "점수: " + result.getScore() + "\n" +
+                "소요 시간: " + result.getTimeElapsed() + "초\n\n" +
+                "찬스 효과: 상대의 돌을 강제 랜덤 수로 둔 뒤 내 턴을 유지합니다.");
         });
     }
 
@@ -1236,36 +1236,36 @@ public class GameView {
     }
 
     private void applyForcedMove(int moveColor, int returnTurnColor, int[] move) {
-        // Debug: State before forced move execution
+        // 디버깅: 강제 수 실행 전 상태
         int beforeTurn = gameModel.getCurrentTurn();
-        System.out.println("[Forced Move Before] Current turn: " + beforeTurn + 
-                          ", moveColor(opponent color): " + moveColor + 
-                          ", returnTurnColor(chance card user color): " + returnTurnColor);
+        System.out.println("[강제 수 실행 전] 현재 턴: " + beforeTurn + 
+                          ", moveColor(상대방 색): " + moveColor + 
+                          ", returnTurnColor(찬스카드 사용자 색): " + returnTurnColor);
         
-        // Set turn to opponent color
+        // 상대방 색으로 턴 설정
         gameModel.setCurrentTurn(moveColor);
-        System.out.println("[Forced Move] Set turn to opponent color(" + moveColor + ")");
+        System.out.println("[강제 수 실행] 턴을 상대방 색(" + moveColor + ")으로 설정");
         
-        // Place piece with opponent color
+        // 상대방 색으로 돌 놓기
         boolean success = gameModel.placePieceAndFlip(move[0], move[1]);
-        System.out.println("[Forced Move] Place piece result: " + (success ? "Success" : "Failed") + 
-                          ", position: (" + move[0] + ", " + move[1] + ")");
+        System.out.println("[강제 수 실행] 돌 놓기 결과: " + (success ? "성공" : "실패") + 
+                          ", 위치: (" + move[0] + ", " + move[1] + ")");
         
         if (success) {
-            // Return turn to chance card user color
+            // 찬스카드 사용자 색으로 턴 복귀
             gameModel.setCurrentTurn(returnTurnColor);
-            System.out.println("[Forced Move] Return turn to chance card user color(" + returnTurnColor + ")");
+            System.out.println("[강제 수 실행] 턴을 찬스카드 사용자 색(" + returnTurnColor + ")으로 복귀");
         } else {
-            // Return to original turn on failure
+            // 실패 시 원래 턴으로 복귀
             gameModel.setCurrentTurn(beforeTurn);
-            System.out.println("[Forced Move] Failed - Return to original turn(" + beforeTurn + ")");
+            System.out.println("[강제 수 실행] 실패 - 원래 턴(" + beforeTurn + ")으로 복귀");
         }
         
         drawBoard();
         updateScoreDisplay();
         drawValidMoves();
         
-        System.out.println("[Forced Move After] Final turn: " + gameModel.getCurrentTurn());
+        System.out.println("[강제 수 실행 후] 최종 턴: " + gameModel.getCurrentTurn());
         
         if (gameModel.isGameOver()) {
             handleGameOver();
