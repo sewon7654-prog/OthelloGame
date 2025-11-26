@@ -859,6 +859,7 @@ public class GameView {
         // 카드 아이콘 (Float 애니메이션 추가)
         Label iconLabel = new Label(icon);
         iconLabel.getStyleClass().add("card-icon");
+        iconLabel.setStyle("-fx-font-size: 56px;"); // 아이콘(이모지) 크기 확대
         
         // Float 애니메이션
         javafx.animation.Timeline floatAnimation = new javafx.animation.Timeline(
