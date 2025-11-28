@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.example.model.GameModel;
 import org.example.model.User;
 import org.example.service.ConfigService;
@@ -188,6 +189,14 @@ public class MenuView {
         menuScene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
         primaryStage.setScene(menuScene);
         primaryStage.setTitle("Othello Game - 메인 메뉴");
+        
+        // 창 모드 설정 (창 제어 버튼 표시)
+        primaryStage.initStyle(StageStyle.DECORATED); // 창 제어 버튼 표시
+        primaryStage.setFullScreen(false); // 전체화면 아님
+        primaryStage.setResizable(true); // 크기 조절 가능
+        primaryStage.setMinWidth(screenWidth);
+        primaryStage.setMinHeight(screenHeight);
+        
         primaryStage.show();
     }
 
