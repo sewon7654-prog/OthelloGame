@@ -7,13 +7,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.example.model.User;
 import org.example.service.DatabaseService;
+import org.example.service.ButtonEffectService;
+import org.example.service.PixelArtUIService;
 
 /**
  * 로그인 및 회원가입 UI
@@ -47,70 +48,103 @@ public class LoginView {
      * 로그인 화면 표시
      */
     public void show() {
-        VBox mainLayout = new VBox(25);
+        // 픽셀 아트 배경 생성 (메뉴 화면과 동일한 크기)
+        double screenWidth = 1600;
+        double screenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
+        
+        VBox mainLayout = new VBox(30);
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setPadding(new Insets(40));
+        mainLayout.setPadding(new Insets(60));
         mainLayout.getStyleClass().add("login-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
+        
+        // 배경과 로그인 화면을 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
-        // 타이틀
-        Label title = new Label("오셀로 게임");
-        title.getStyleClass().add("login-title");
+        // 타이틀 (픽셀 아트 로고)
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 800, 200);
+        titleLogo.setAlignment(Pos.CENTER);
         
         Label subtitle = new Label("로그인");
-        subtitle.getStyleClass().add("login-subtitle");
+        subtitle.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 2, 2);");
 
         // 로그인 폼
         GridPane loginForm = createLoginForm();
 
-        // 회원가입 버튼
-        Button btnRegister = new Button("회원가입");
-        btnRegister.getStyleClass().add("register-button");
+        // 회원가입 버튼 (픽셀 아트 스타일)
+        StackPane btnRegisterPane = PixelArtUIService.createPixelArtButton("회원가입", 300, 70);
+        Button btnRegister = new Button();
+        btnRegister.setGraphic(btnRegisterPane);
+        btnRegister.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnRegister.setPrefSize(300, 70);
+        ButtonEffectService.addPixelArtButtonEffects(btnRegister);
+        ButtonEffectService.addClickParticleEffect(btnRegister);
         btnRegister.setOnAction(e -> showRegisterView());
 
-        // 뒤로가기 버튼
-        Button btnBack = new Button("← 메뉴로");
-        btnBack.getStyleClass().add("back-button");
+        // 뒤로가기 버튼 (픽셀 아트 스타일)
+        StackPane btnBackPane = PixelArtUIService.createPixelArtButton("← 메뉴로", 250, 70);
+        Button btnBack = new Button();
+        btnBack.setGraphic(btnBackPane);
+        btnBack.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnBack.setPrefSize(250, 70);
+        ButtonEffectService.addPixelArtButtonEffects(btnBack);
+        ButtonEffectService.addClickParticleEffect(btnBack);
         btnBack.setOnAction(e -> {
             if (onBackToMenu != null) onBackToMenu.run();
         });
 
-        HBox buttonBox = new HBox(15, btnRegister, btnBack);
+        HBox buttonBox = new HBox(20, btnRegister, btnBack);
         buttonBox.setAlignment(Pos.CENTER);
 
-        mainLayout.getChildren().addAll(title, subtitle, loginForm, buttonBox);
+        mainLayout.getChildren().addAll(titleLogo, subtitle, loginForm, buttonBox);
 
-        Scene scene = new Scene(mainLayout, 450, 500);
+        Scene scene = new Scene(rootPane, screenWidth, screenHeight);
         scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("로그인");
+        
+        // 창 모드 설정
+        primaryStage.initStyle(StageStyle.DECORATED);
+        primaryStage.setFullScreen(false);
+        primaryStage.setResizable(true);
+        primaryStage.setMinWidth(screenWidth);
+        primaryStage.setMinHeight(screenHeight);
     }
 
     /**
      * 로그인 폼 생성
      */
     private GridPane createLoginForm() {
-        VBox formContainer = new VBox(20);
+        VBox formContainer = new VBox(25);
         formContainer.setAlignment(Pos.CENTER);
-        formContainer.setPadding(new Insets(30));
+        formContainer.setPadding(new Insets(40));
         formContainer.getStyleClass().add("form-container");
 
         Label lblUserId = new Label("아이디");
-        lblUserId.getStyleClass().add("form-label");
+        lblUserId.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 3, 0, 1, 1);");
         
         TextField tfUserId = new TextField();
         tfUserId.setPromptText("아이디를 입력하세요");
-        tfUserId.getStyleClass().add("form-input");
+        tfUserId.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 40px; -fx-background-color: #f4e5b7; -fx-background-radius: 5px; -fx-border-color: #8B4513; -fx-border-width: 2px; -fx-border-radius: 5px;");
 
         Label lblPassword = new Label("비밀번호");
-        lblPassword.getStyleClass().add("form-label");
+        lblPassword.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 3, 0, 1, 1);");
         
         PasswordField pfPassword = new PasswordField();
         pfPassword.setPromptText("비밀번호를 입력하세요");
-        pfPassword.getStyleClass().add("form-input");
+        pfPassword.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 40px; -fx-background-color: #f4e5b7; -fx-background-radius: 5px; -fx-border-color: #8B4513; -fx-border-width: 2px; -fx-border-radius: 5px;");
 
-        Button btnLogin = new Button("로그인");
-        btnLogin.getStyleClass().add("login-submit-button");
+        // 로그인 버튼 (픽셀 아트 스타일)
+        StackPane btnLoginPane = PixelArtUIService.createPixelArtButton("로그인", 350, 70);
+        Button btnLogin = new Button();
+        btnLogin.setGraphic(btnLoginPane);
+        btnLogin.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnLogin.setPrefSize(350, 70);
+        ButtonEffectService.addPixelArtButtonEffects(btnLogin);
+        ButtonEffectService.addClickParticleEffect(btnLogin);
         btnLogin.setOnAction(e -> handleLogin(tfUserId.getText(), pfPassword.getText()));
 
         // Enter 키로 로그인
@@ -156,33 +190,55 @@ public class LoginView {
      * 회원가입 화면 표시
      */
     private void showRegisterView() {
-        VBox mainLayout = new VBox(25);
+        // 픽셀 아트 배경 생성 (메뉴 화면과 동일한 크기)
+        double screenWidth = 1600;
+        double screenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
+        
+        VBox mainLayout = new VBox(30);
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setPadding(new Insets(40));
+        mainLayout.setPadding(new Insets(50));
         mainLayout.getStyleClass().add("login-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
+        
+        // 배경과 회원가입 화면을 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
-        // 타이틀
-        Label title = new Label("오셀로 게임");
-        title.getStyleClass().add("login-title");
+        // 타이틀 (픽셀 아트 로고)
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 800, 180);
+        titleLogo.setAlignment(Pos.CENTER);
         
         Label subtitle = new Label("회원가입");
-        subtitle.getStyleClass().add("login-subtitle");
+        subtitle.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 4, 0, 2, 2);");
 
         // 회원가입 폼
         GridPane registerForm = createRegisterForm();
 
-        // 뒤로가기 버튼
-        Button btnBack = new Button("← 로그인 화면으로");
-        btnBack.getStyleClass().add("back-button");
+        // 뒤로가기 버튼 (픽셀 아트 스타일)
+        StackPane btnBackPane = PixelArtUIService.createPixelArtButton("← 로그인 화면으로", 300, 70);
+        Button btnBack = new Button();
+        btnBack.setGraphic(btnBackPane);
+        btnBack.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnBack.setPrefSize(300, 70);
+        ButtonEffectService.addPixelArtButtonEffects(btnBack);
+        ButtonEffectService.addClickParticleEffect(btnBack);
         btnBack.setOnAction(e -> show());
 
-        mainLayout.getChildren().addAll(title, subtitle, registerForm, btnBack);
+        mainLayout.getChildren().addAll(titleLogo, subtitle, registerForm, btnBack);
 
-        Scene scene = new Scene(mainLayout, 500, 650);
+        Scene scene = new Scene(rootPane, screenWidth, screenHeight);
         scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("회원가입");
+        
+        // 창 모드 설정
+        primaryStage.initStyle(StageStyle.DECORATED);
+        primaryStage.setFullScreen(false);
+        primaryStage.setResizable(true);
+        primaryStage.setMinWidth(screenWidth);
+        primaryStage.setMinHeight(screenHeight);
     }
 
     /**
@@ -195,17 +251,23 @@ public class LoginView {
         formContainer.getStyleClass().add("form-container");
 
         Label lblUserId = new Label("아이디");
-        lblUserId.getStyleClass().add("form-label");
+        lblUserId.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 3, 0, 1, 1);");
         
         HBox idBox = new HBox(10);
         idBox.setAlignment(Pos.CENTER);
         
         TextField tfUserId = new TextField();
         tfUserId.setPromptText("아이디 입력 (영문, 숫자)");
-        tfUserId.getStyleClass().add("id-input");
+        tfUserId.setStyle("-fx-font-size: 16px; -fx-pref-width: 250px; -fx-pref-height: 40px; -fx-background-color: #f4e5b7; -fx-background-radius: 5px; -fx-border-color: #8B4513; -fx-border-width: 2px; -fx-border-radius: 5px;");
         
-        Button btnCheckId = new Button("중복 확인");
-        btnCheckId.getStyleClass().add("check-id-button");
+        // 중복 확인 버튼 (픽셀 아트 스타일)
+        StackPane btnCheckIdPane = PixelArtUIService.createPixelArtButton("중복 확인", 150, 50);
+        Button btnCheckId = new Button();
+        btnCheckId.setGraphic(btnCheckIdPane);
+        btnCheckId.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnCheckId.setPrefSize(150, 50);
+        ButtonEffectService.addPixelArtButtonEffects(btnCheckId);
+        ButtonEffectService.addClickParticleEffect(btnCheckId);
         btnCheckId.setOnAction(e -> {
             String userId = tfUserId.getText();
             if (userId.isEmpty()) {
@@ -222,21 +284,27 @@ public class LoginView {
         idBox.getChildren().addAll(tfUserId, btnCheckId);
 
         Label lblPassword = new Label("비밀번호");
-        lblPassword.getStyleClass().add("form-label");
+        lblPassword.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 3, 0, 1, 1);");
         
         PasswordField pfPassword = new PasswordField();
         pfPassword.setPromptText("비밀번호 입력 (4자 이상)");
-        pfPassword.getStyleClass().add("form-input");
+        pfPassword.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 40px; -fx-background-color: #f4e5b7; -fx-background-radius: 5px; -fx-border-color: #8B4513; -fx-border-width: 2px; -fx-border-radius: 5px;");
 
         Label lblPasswordConfirm = new Label("비밀번호 확인");
-        lblPasswordConfirm.getStyleClass().add("form-label");
+        lblPasswordConfirm.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f4e5b7; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 3, 0, 1, 1);");
         
         PasswordField pfPasswordConfirm = new PasswordField();
         pfPasswordConfirm.setPromptText("비밀번호 재입력");
-        pfPasswordConfirm.getStyleClass().add("form-input");
+        pfPasswordConfirm.setStyle("-fx-font-size: 16px; -fx-pref-width: 350px; -fx-pref-height: 40px; -fx-background-color: #f4e5b7; -fx-background-radius: 5px; -fx-border-color: #8B4513; -fx-border-width: 2px; -fx-border-radius: 5px;");
 
-        Button btnRegister = new Button("가입하기");
-        btnRegister.getStyleClass().add("register-submit-button");
+        // 가입하기 버튼 (픽셀 아트 스타일)
+        StackPane btnRegisterPane = PixelArtUIService.createPixelArtButton("가입하기", 350, 70);
+        Button btnRegister = new Button();
+        btnRegister.setGraphic(btnRegisterPane);
+        btnRegister.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnRegister.setPrefSize(350, 70);
+        ButtonEffectService.addPixelArtButtonEffects(btnRegister);
+        ButtonEffectService.addClickParticleEffect(btnRegister);
         btnRegister.setOnAction(e -> handleRegister(
             tfUserId.getText(), 
             pfPassword.getText(), 
