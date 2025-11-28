@@ -21,9 +21,12 @@ import org.example.model.GameModel;
 import org.example.model.User;
 import org.example.network.NetworkClient;
 import org.example.service.AIPlayer;
+import org.example.service.ButtonEffectService;
 import org.example.service.DatabaseService;
 import org.example.service.SoundService;
 import org.example.service.EffectService;
+import org.example.service.PixelArtBackgroundService;
+import org.example.service.PixelArtUIService;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,7 @@ import java.util.Map;
  */
 public class GameView {
 
-    private static final int TILE_SIZE = 85;
+    private static final int TILE_SIZE = 120; // 컴퓨터 화면에 맞게 더 크게
     private static final int WIDTH = 8;
 
     // Core Game Components
@@ -46,6 +49,7 @@ public class GameView {
     private String opponentUserId; // 온라인 모드에서 상대방 사용자 ID
     private DatabaseService dbService;
     private SoundService soundService;
+    private boolean isProcessingMove = false; // 빠른 연속 클릭 방지
     
     // 커스텀 색상 설정 (기본값)
     private Color customBlackColor = Color.BLACK;
@@ -54,6 +58,7 @@ public class GameView {
     // GUI Components
     private Stage primaryStage;
     private BorderPane mainLayout;
+    private StackPane gameRootPane; // 픽셀 아트 배경을 포함한 루트
     private GridPane boardView;
     private Label scoreLabel;
     private Runnable onBackToMenu;
@@ -154,6 +159,8 @@ public class GameView {
 
         Button backButton = new Button("← 메뉴로 돌아가기");
         backButton.getStyleClass().add("back-to-menu-button");
+        ButtonEffectService.addPixelArtButtonEffects(backButton);
+        ButtonEffectService.addClickParticleEffect(backButton);
         backButton.setOnAction(e -> {
             if (onBackToMenu != null) onBackToMenu.run();
         });
@@ -173,6 +180,9 @@ public class GameView {
         topPanel.setPadding(new Insets(12));
         topPanel.setAlignment(Pos.CENTER);
         topPanel.getStyleClass().add("game-top-panel");
+        // 픽셀 아트 배경 적용
+        javafx.scene.paint.Paint woodPaint = PixelArtBackgroundService.createWoodTexture();
+        PixelArtBackgroundService.applyPixelArtBackground(topPanel, woodPaint);
         topPanel.getChildren().addAll(modeLabel, scoreLabel);
 
         // 보드를 중앙 정렬하기 위한 컨테이너
@@ -182,10 +192,24 @@ public class GameView {
         boardContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         BorderPane.setAlignment(boardContainer, Pos.CENTER);
 
+        // 화면 크기 계산 (컴퓨터 화면 크기에 맞게)
+        int boardSize = WIDTH * TILE_SIZE + 20; // 보드 크기 계산
+        int rightPanelWidth = 400; // 오른쪽 패널 (더 크게)
+        int sceneWidth = boardSize + rightPanelWidth + 80; // 전체 화면 너비
+        int sceneHeight = boardSize + 280; // 전체 화면 높이
+
+        // 픽셀 아트 배경 생성
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(sceneWidth, sceneHeight);
+
         mainLayout = new BorderPane();
         mainLayout.setTop(topPanel);
         mainLayout.setCenter(boardContainer);
         mainLayout.getStyleClass().add("game-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
+        
+        // 배경과 게임을 스택으로 합치기
+        this.gameRootPane = new StackPane();
+        this.gameRootPane.getChildren().addAll(backgroundPane, mainLayout);
         
         // 로컬/온라인 모드: 찬스카드를 오른쪽에 배치
         if (mode == GameModel.Mode.LOCAL || mode == GameModel.Mode.ONLINE) {
@@ -210,12 +234,8 @@ public class GameView {
         drawValidMoves();
         updateScoreDisplay();
 
-        // 화면 크기 최적화 (화면에 맞게)
-        int boardSize = WIDTH * TILE_SIZE + 20; // 680 + 20 = 700
-        int rightPanelWidth = 280; // 오른쪽 패널
-        int sceneWidth = boardSize + rightPanelWidth + 40; // 700 + 280 + 40 = 1020
-        int sceneHeight = boardSize + 180; // 700 + 180 = 880
-        Scene gameScene = new Scene(mainLayout, sceneWidth, sceneHeight);
+        // 화면 크기는 위에서 계산된 값 사용
+        Scene gameScene = new Scene(gameRootPane, sceneWidth, sceneHeight);
         gameScene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         gameScene.getStylesheets().add(getClass().getResource("/css/game.css").toExternalForm());
         primaryStage.setScene(gameScene);
@@ -402,6 +422,11 @@ public class GameView {
             return;
         }
 
+        // 빠른 연속 클릭 방지
+        if (isProcessingMove) {
+            return;
+        }
+
         // 턴 제어
         if (gameModel.isAIMode() && gameModel.getCurrentTurn() == gameModel.getAIColor()) {
             showAlert("Wait", "AI의 턴입니다. 기다려 주세요.");
@@ -412,39 +437,86 @@ public class GameView {
             return;
         }
 
+        // 유효한 수인지 먼저 확인
+        List<int[]> validMoves = gameModel.getValidMoves();
+        boolean isValidMove = false;
+        for (int[] move : validMoves) {
+            if (move[0] == x && move[1] == y) {
+                isValidMove = true;
+                break;
+            }
+        }
+
+        if (!isValidMove) {
+            showAlert("Invalid Move", "유효한 위치가 아닙니다.");
+            return;
+        }
+
+        // 플래그 설정
+        isProcessingMove = true;
+
+        // 방금 놓을 돌의 색상 저장 (턴이 바뀌기 전)
+        int currentTurnBeforeMove = gameModel.getCurrentTurn();
+        Color pieceColor = currentTurnBeforeMove == 1 ? customBlackColor : customWhiteColor;
+
+        // 돌 놓기
         boolean flipped = gameModel.placePieceAndFlip(x, y);
 
         if (flipped) {
             // 사운드 효과 재생
             soundService.playPlaceSound();
             
-            // 그래픽 효과 적용
-            StackPane clickedTile = (StackPane) boardView.getChildren().get(y * WIDTH + x);
-            if (clickedTile.getChildren().size() > 1) {
-                javafx.scene.Node piece = clickedTile.getChildren().get(clickedTile.getChildren().size() - 1);
-                if (piece instanceof Circle) {
-                    Animation placeAnim = EffectService.createPlaceAnimation(piece);
-                    placeAnim.play();
-                    
-                    // 파티클 효과 (타일의 중심 좌표 계산)
-                    Color pieceColor = gameModel.getCurrentTurn() == 1 ? customBlackColor : customWhiteColor;
-                    double tileCenterX = x * (TILE_SIZE + 2) + TILE_SIZE / 2;
-                    double tileCenterY = y * (TILE_SIZE + 2) + TILE_SIZE / 2;
-                    EffectService.createParticleEffect(boardView, tileCenterX, tileCenterY, pieceColor);
-                }
-            }
-            
             if (gameModel.isOnlineMode()) {
                 networkClient.sendMove(x, y);
             }
 
+            // 보드 업데이트 (돌이 그려진 후)
             updateGameViewAfterMove();
+
+            // 보드 업데이트 후 효과 적용 (drawBoard() 이후에 돌이 그려져 있음)
+            Platform.runLater(() -> {
+                StackPane clickedTile = (StackPane) boardView.getChildren().get(y * WIDTH + x);
+                
+                // 돌 찾기 (가장 마지막 Circle이 방금 놓은 돌)
+                Circle placedPiece = null;
+                for (int i = clickedTile.getChildren().size() - 1; i >= 0; i--) {
+                    javafx.scene.Node node = clickedTile.getChildren().get(i);
+                    if (node instanceof Circle && !node.getStyleClass().contains("valid-move")) {
+                        placedPiece = (Circle) node;
+                        break;
+                    }
+                }
+                
+                if (placedPiece != null) {
+                    // 돌 놓기 애니메이션
+                    Animation placeAnim = EffectService.createPlaceAnimation(placedPiece);
+                    placeAnim.play();
+                    
+                    // 타일 내부에 파티클 컨테이너 추가
+                    javafx.scene.layout.Pane particleContainer = new javafx.scene.layout.Pane();
+                    particleContainer.setPrefSize(TILE_SIZE, TILE_SIZE);
+                    particleContainer.setMouseTransparent(true);
+                    clickedTile.getChildren().add(particleContainer);
+                    
+                    // 타일 중심에 파티클 효과 적용
+                    double tileCenterX = TILE_SIZE / 2;
+                    double tileCenterY = TILE_SIZE / 2;
+                    EffectService.createParticleEffect(particleContainer, tileCenterX, tileCenterY, pieceColor);
+                }
+                
+                // 플래그 해제 (애니메이션 시간 후)
+                Timeline delay = new Timeline(new KeyFrame(Duration.millis(500), e -> {
+                    isProcessingMove = false;
+                }));
+                delay.play();
+            });
 
             // AI 턴 처리
             if (gameModel.isAIMode() && !gameModel.isGameOver()) {
                 Platform.runLater(this::handleAITurn);
             }
         } else {
+            isProcessingMove = false;
             showAlert("Invalid Move", "유효한 위치가 아닙니다.");
         }
     }
@@ -774,10 +846,10 @@ public class GameView {
         // Animation/레이아웃 처리 중에도 안전하게 다음 UI 펄스에서 실행
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
             alert.setContentText(message);
-            alert.showAndWait();
+        alert.showAndWait();
         });
     }
     
@@ -1168,7 +1240,14 @@ public class GameView {
                 networkClient.sendMinigameResult(resultMessage);
             }
 
-            // 3) 알림은 마지막에 안전하게 표시
+            // 3) 미니게임 성공 애니메이션 효과 추가
+            if (gameRootPane != null) {
+                EffectService.createMinigameSuccessEffect(gameRootPane);
+            } else if (mainLayout != null) {
+                EffectService.createMinigameSuccessEffect(mainLayout);
+            }
+            
+            // 4) 알림은 마지막에 안전하게 표시
             showAlert("미니게임 성공!",
                 "축하합니다! 미니게임에 성공했습니다.\n" +
                 "점수: " + result.getScore() + "\n" +

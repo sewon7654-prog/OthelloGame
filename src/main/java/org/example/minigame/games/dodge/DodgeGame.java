@@ -3,7 +3,6 @@ package org.example.minigame.games.dodge;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -24,10 +23,10 @@ import java.util.function.Consumer;
  * 회피 게임
  */
 public class DodgeGame implements MinigameBase {
-    private static final int GAME_DURATION = 10; // 10초 동안 생존
+    private static final int GAME_DURATION = 13; // 13초로 고정
     private static final double PLAYER_SPEED = 5.0;
-    private static final double OBSTACLE_SPEED = 3.0;
-    private static final double OBSTACLE_SPAWN_RATE = 0.02; // 매 프레임마다 생성 확률
+    private static final double OBSTACLE_SPEED = 9.0; // 장애물 속도 대폭 증가 (7.5 -> 9.0) - 난이도 상승
+    private static final double OBSTACLE_SPAWN_RATE = 0.12; // 매 프레임마다 생성 확률 대폭 증가 (0.08 -> 0.12) - 난이도 상승
 
     private DodgeGameView view;
     private boolean finished = false;

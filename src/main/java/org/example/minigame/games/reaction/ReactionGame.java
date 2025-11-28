@@ -19,7 +19,7 @@ import java.util.function.Consumer;
  * 반응속도 게임
  */
 public class ReactionGame implements MinigameBase {
-    private static final long SUCCESS_THRESHOLD = 500; // 0.5초 이내 클릭 시 성공 (밀리초)
+    private static final long SUCCESS_THRESHOLD = 300; // 0.3초 이내 클릭 시 성공 (밀리초) - 난이도 상승
     private static final long MIN_WAIT_TIME = 1000; // 최소 대기 시간 1초
     private static final long MAX_WAIT_TIME = 3000; // 최대 대기 시간 3초
 

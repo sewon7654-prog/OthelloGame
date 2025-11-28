@@ -10,14 +10,16 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.model.GameModel;
 import org.example.model.User;
 import org.example.service.ConfigService;
+import org.example.service.ButtonEffectService;
+import org.example.service.PixelArtUIService;
 
 import java.util.Optional;
 
@@ -56,14 +58,24 @@ public class MenuView {
      * 시작 메뉴를 표시합니다
      */
     public void show() {
-        VBox mainLayout = new VBox(25);
+        // 픽셀 아트 배경 생성 (컴퓨터 화면 크기에 맞게)
+        double screenWidth = 1600;
+        double screenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
+        
+        VBox mainLayout = new VBox(35);
         mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setPadding(new Insets(40));
+        mainLayout.setPadding(new Insets(60));
         mainLayout.getStyleClass().add("menu-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
+        
+        // 배경과 메뉴를 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
-        // 타이틀
-        Label title = new Label("오셀로 게임");
-        title.getStyleClass().add("menu-title");
+        // 타이틀 (픽셀 아트 로고 - 이미지처럼 큰 픽셀 폰트)
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 1200, 280);
+        titleLogo.setAlignment(Pos.CENTER);
 
         // 로그인 상태 표시
         Label statusLabel;
@@ -75,19 +87,36 @@ public class MenuView {
             statusLabel.getStyleClass().add("status-label-guest");
         }
 
-        // 게임 모드 버튼들
-        Button btnLocal = new Button("로컬 2인 대전");
-        Button btnOnline = new Button("온라인 1:1 대전");
-        Button btnAI = new Button("AI와 대전");
+        // 게임 모드 버튼들 (픽셀 아트 스타일 - 더 크게)
+        StackPane btnLocal = PixelArtUIService.createPixelArtButton("로컬 2인 대전", 650, 100);
+        StackPane btnOnline = PixelArtUIService.createPixelArtButton("온라인 1:1 대전", 650, 100);
+        StackPane btnAI = PixelArtUIService.createPixelArtButton("AI와 대전", 650, 100);
+        
+        // 클릭 이벤트를 위한 래퍼
+        javafx.scene.control.Button btnLocalWrapper = new javafx.scene.control.Button();
+        btnLocalWrapper.setGraphic(btnLocal);
+        btnLocalWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+        
+        javafx.scene.control.Button btnOnlineWrapper = new javafx.scene.control.Button();
+        btnOnlineWrapper.setGraphic(btnOnline);
+        btnOnlineWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
+        
+        javafx.scene.control.Button btnAIWrapper = new javafx.scene.control.Button();
+        btnAIWrapper.setGraphic(btnAI);
+        btnAIWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
 
-        btnLocal.getStyleClass().add("game-mode-button");
-        btnOnline.getStyleClass().add("game-mode-button");
-        btnAI.getStyleClass().add("game-mode-button");
+        // 세련된 클릭 효과 추가
+        ButtonEffectService.addPixelArtButtonEffects(btnLocalWrapper);
+        ButtonEffectService.addPixelArtButtonEffects(btnOnlineWrapper);
+        ButtonEffectService.addPixelArtButtonEffects(btnAIWrapper);
+        ButtonEffectService.addClickParticleEffect(btnLocalWrapper);
+        ButtonEffectService.addClickParticleEffect(btnOnlineWrapper);
+        ButtonEffectService.addClickParticleEffect(btnAIWrapper);
 
         // 버튼 클릭 이벤트
-        btnLocal.setOnAction(e -> gameView.show(GameModel.Mode.LOCAL));
-        btnOnline.setOnAction(e -> startOnlineMatch());
-        btnAI.setOnAction(e -> showAIDifficultyMenu());
+        btnLocalWrapper.setOnAction(e -> gameView.show(GameModel.Mode.LOCAL));
+        btnOnlineWrapper.setOnAction(e -> startOnlineMatch());
+        btnAIWrapper.setOnAction(e -> showAIDifficultyMenu());
 
         // 계정 관련 버튼들
         HBox accountButtons = new HBox(15);
@@ -95,42 +124,66 @@ public class MenuView {
 
         if (currentUser == null) {
             // 로그인 전
-            Button btnLogin = new Button("로그인 / 회원가입");
-            btnLogin.getStyleClass().add("login-button");
-            btnLogin.setOnAction(e -> loginView.show());
-            accountButtons.getChildren().add(btnLogin);
+            StackPane btnLoginPane = PixelArtUIService.createPixelArtButton("로그인 / 회원가입", 400, 80);
+            javafx.scene.control.Button btnLoginWrapper = new javafx.scene.control.Button();
+            btnLoginWrapper.setGraphic(btnLoginPane);
+            btnLoginWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+            btnLoginWrapper.setPrefSize(400, 80);
+            ButtonEffectService.addPixelArtButtonEffects(btnLoginWrapper);
+            ButtonEffectService.addClickParticleEffect(btnLoginWrapper);
+            btnLoginWrapper.setOnAction(e -> loginView.show());
+            accountButtons.getChildren().add(btnLoginWrapper);
         } else {
             // 로그인 후
-            Button btnStats = new Button("내 전적");
-            Button btnSettings = new Button("설정");
-            Button btnLogout = new Button("로그아웃");
+            StackPane btnStatsPane = PixelArtUIService.createPixelArtButton("내 전적", 250, 80);
+            StackPane btnSettingsPane = PixelArtUIService.createPixelArtButton("설정", 250, 80);
+            StackPane btnLogoutPane = PixelArtUIService.createPixelArtButton("로그아웃", 250, 80);
             
-            btnStats.getStyleClass().add("account-button");
-            btnSettings.getStyleClass().add("account-button");
-            btnLogout.getStyleClass().add("account-button");
+            javafx.scene.control.Button btnStatsWrapper = new javafx.scene.control.Button();
+            btnStatsWrapper.setGraphic(btnStatsPane);
+            btnStatsWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+            btnStatsWrapper.setPrefSize(250, 80);
+            
+            javafx.scene.control.Button btnSettingsWrapper = new javafx.scene.control.Button();
+            btnSettingsWrapper.setGraphic(btnSettingsPane);
+            btnSettingsWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+            btnSettingsWrapper.setPrefSize(250, 80);
+            
+            javafx.scene.control.Button btnLogoutWrapper = new javafx.scene.control.Button();
+            btnLogoutWrapper.setGraphic(btnLogoutPane);
+            btnLogoutWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+            btnLogoutWrapper.setPrefSize(250, 80);
 
-            btnStats.setOnAction(e -> showStats());
-            btnSettings.setOnAction(e -> showSettings());
-            btnLogout.setOnAction(e -> {
+            // 세련된 클릭 효과 추가
+            ButtonEffectService.addPixelArtButtonEffects(btnStatsWrapper);
+            ButtonEffectService.addPixelArtButtonEffects(btnSettingsWrapper);
+            ButtonEffectService.addPixelArtButtonEffects(btnLogoutWrapper);
+            ButtonEffectService.addClickParticleEffect(btnStatsWrapper);
+            ButtonEffectService.addClickParticleEffect(btnSettingsWrapper);
+            ButtonEffectService.addClickParticleEffect(btnLogoutWrapper);
+
+            btnStatsWrapper.setOnAction(e -> showStats());
+            btnSettingsWrapper.setOnAction(e -> showSettings());
+            btnLogoutWrapper.setOnAction(e -> {
                 currentUser = null;
                 gameView.setCurrentUser(null);
                 showAlert(Alert.AlertType.INFORMATION, "로그아웃", "로그아웃되었습니다.");
                 show();
             });
 
-            accountButtons.getChildren().addAll(btnStats, btnSettings, btnLogout);
+            accountButtons.getChildren().addAll(btnStatsWrapper, btnSettingsWrapper, btnLogoutWrapper);
         }
 
         mainLayout.getChildren().addAll(
-            title,
+            titleLogo,
             statusLabel,
-            btnLocal,
-            btnOnline,
-            btnAI,
+            btnLocalWrapper,
+            btnOnlineWrapper,
+            btnAIWrapper,
             accountButtons
         );
 
-        Scene menuScene = new Scene(mainLayout, 500, 600);
+        Scene menuScene = new Scene(rootPane, screenWidth, screenHeight);
         menuScene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         menuScene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
         primaryStage.setScene(menuScene);
@@ -170,41 +223,78 @@ public class MenuView {
      * AI 난이도 선택 메뉴 표시
      */
     private void showAIDifficultyMenu() {
-        VBox menuBox = new VBox(25);
+        // 픽셀 아트 배경 생성 (컴퓨터 화면 크기에 맞게)
+        double aiScreenWidth = 1600;
+        double aiScreenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(aiScreenWidth, aiScreenHeight);
+        
+        VBox menuBox = new VBox(35);
         menuBox.setAlignment(Pos.CENTER);
-        menuBox.setPadding(new Insets(40));
+        menuBox.setPadding(new Insets(60));
         menuBox.getStyleClass().add("menu-container");
+        menuBox.setStyle("-fx-background-color: transparent;");
+        
+        // 배경과 메뉴를 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, menuBox);
 
-        Label title = new Label("AI 난이도 선택");
-        title.getStyleClass().add("menu-title");
+        // 타이틀 로고
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("AI 난이도 선택", 600, 140);
+        titleLogo.setAlignment(Pos.CENTER);
 
-        Button btnEasy = new Button("쉬움 (Easy)");
-        Button btnMedium = new Button("중간 (Medium)");
-        Button btnHard = new Button("어려움 (Hard)");
-        Button btnBack = new Button("← 뒤로가기");
+        // 버튼들 (픽셀 아트 스타일)
+        StackPane btnEasyPane = PixelArtUIService.createPixelArtButton("쉬움 (Easy)", 500, 80);
+        StackPane btnMediumPane = PixelArtUIService.createPixelArtButton("중간 (Medium)", 500, 80);
+        StackPane btnHardPane = PixelArtUIService.createPixelArtButton("어려움 (Hard)", 500, 80);
+        StackPane btnBackPane = PixelArtUIService.createPixelArtButton("← 뒤로가기", 300, 60);
+        
+        javafx.scene.control.Button btnEasyWrapper = new javafx.scene.control.Button();
+        btnEasyWrapper.setGraphic(btnEasyPane);
+        btnEasyWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnEasyWrapper.setPrefSize(650, 100);
+        
+        javafx.scene.control.Button btnMediumWrapper = new javafx.scene.control.Button();
+        btnMediumWrapper.setGraphic(btnMediumPane);
+        btnMediumWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnMediumWrapper.setPrefSize(650, 100);
+        
+        javafx.scene.control.Button btnHardWrapper = new javafx.scene.control.Button();
+        btnHardWrapper.setGraphic(btnHardPane);
+        btnHardWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnHardWrapper.setPrefSize(650, 100);
+        
+        javafx.scene.control.Button btnBackWrapper = new javafx.scene.control.Button();
+        btnBackWrapper.setGraphic(btnBackPane);
+        btnBackWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnBackWrapper.setPrefSize(400, 80);
 
-        btnEasy.getStyleClass().add("game-mode-button");
-        btnMedium.getStyleClass().add("game-mode-button");
-        btnHard.getStyleClass().add("game-mode-button");
-        btnBack.getStyleClass().add("account-button");
+        // 세련된 클릭 효과 추가
+        ButtonEffectService.addPixelArtButtonEffects(btnEasyWrapper);
+        ButtonEffectService.addPixelArtButtonEffects(btnMediumWrapper);
+        ButtonEffectService.addPixelArtButtonEffects(btnHardWrapper);
+        ButtonEffectService.addPixelArtButtonEffects(btnBackWrapper);
+        ButtonEffectService.addClickParticleEffect(btnEasyWrapper);
+        ButtonEffectService.addClickParticleEffect(btnMediumWrapper);
+        ButtonEffectService.addClickParticleEffect(btnHardWrapper);
+        ButtonEffectService.addClickParticleEffect(btnBackWrapper);
 
-        btnEasy.setOnAction(e -> {
+        btnEasyWrapper.setOnAction(e -> {
             gameView.setAIDifficulty(GameModel.Difficulty.EASY);
             gameView.show(GameModel.Mode.AI);
         });
-        btnMedium.setOnAction(e -> {
+        btnMediumWrapper.setOnAction(e -> {
             gameView.setAIDifficulty(GameModel.Difficulty.MEDIUM);
             gameView.show(GameModel.Mode.AI);
         });
-        btnHard.setOnAction(e -> {
+        btnHardWrapper.setOnAction(e -> {
             gameView.setAIDifficulty(GameModel.Difficulty.HARD);
             gameView.show(GameModel.Mode.AI);
         });
-        btnBack.setOnAction(e -> show());
+        btnBackWrapper.setOnAction(e -> show());
 
-        menuBox.getChildren().addAll(title, btnEasy, btnMedium, btnHard, btnBack);
+        menuBox.getChildren().addAll(titleLogo, btnEasyWrapper, btnMediumWrapper, btnHardWrapper, btnBackWrapper);
 
-        Scene scene = new Scene(menuBox, 500, 600);
+        Scene scene = new Scene(rootPane, aiScreenWidth, aiScreenHeight);
         scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
         primaryStage.setScene(scene);

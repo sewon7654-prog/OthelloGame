@@ -1,7 +1,9 @@
-/* 공통 스타일 */
+/* 공통 스타일 - 픽셀 게임 스타일 */
 
 .root {
-    -fx-font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
+    /* 픽셀 폰트가 로드되면 자동으로 사용, 없으면 Courier New 사용 */
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-background-color: #0a0a0a;
 }
 
 /* 공통 버튼 스타일 */
@@ -17,17 +19,23 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
-/* 타이틀 스타일 */
+/* 타이틀 스타일 - 픽셀 게임 스타일 */
 .title-label {
-    -fx-font-size: 36px;
+    -fx-font-size: 60px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 2);
+    -fx-font-family: "Courier New", monospace;
+    -fx-text-fill: #00ff41;
+    -fx-effect: dropshadow(gaussian, #00ff41, 20, 0.8, 0, 0),
+                dropshadow(gaussian, rgba(0,255,65,0.5), 30, 0.6, 0, 0),
+                dropshadow(gaussian, rgba(0,0,0,0.8), 10, 0, 0, 3);
+    -fx-letter-spacing: 3px;
 }
 
 .subtitle-label {
-    -fx-font-size: 18px;
-    -fx-text-fill: #E0E0E0;
+    -fx-font-size: 24px;
+    -fx-font-family: "Courier New", monospace;
+    -fx-text-fill: #a0a0a0;
     -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 5, 0, 0, 2);
 }
 
