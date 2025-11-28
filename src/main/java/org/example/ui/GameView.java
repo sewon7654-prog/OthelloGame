@@ -1093,13 +1093,26 @@ public class GameView {
         }
 
         activeMinigame = minigame;
-        if (minigame instanceof org.example.minigame.games.memory.MemoryGame memoryGame &&
-            gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
-            memoryGame.setUpdatePublisher(state ->
-                networkClient.sendMinigameUpdate(
-                    org.example.minigame.network.MinigameProtocol.createUpdateMessage(state)
-                )
-            );
+        if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+            if (minigame instanceof org.example.minigame.games.memory.MemoryGame memoryGame) {
+                memoryGame.setUpdatePublisher(state ->
+                    networkClient.sendMinigameUpdate(
+                        org.example.minigame.network.MinigameProtocol.createUpdateMessage(state)
+                    )
+                );
+            } else if (minigame instanceof org.example.minigame.games.reaction.ReactionGame reactionGame) {
+                reactionGame.setUpdatePublisher(state ->
+                    networkClient.sendMinigameUpdate(
+                        org.example.minigame.network.MinigameProtocol.createUpdateMessage(state)
+                    )
+                );
+            } else if (minigame instanceof org.example.minigame.games.dodge.DodgeGame dodgeGame) {
+                dodgeGame.setUpdatePublisher(state ->
+                    networkClient.sendMinigameUpdate(
+                        org.example.minigame.network.MinigameProtocol.createUpdateMessage(state)
+                    )
+                );
+            }
         }
 
         minigame.startPlayerMode(primaryStage, result -> {
