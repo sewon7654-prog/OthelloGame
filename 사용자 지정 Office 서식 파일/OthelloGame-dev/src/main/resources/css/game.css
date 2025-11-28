@@ -67,11 +67,11 @@
    찬스카드 공통 스타일
    ============================================ */
 .game-card {
-    -fx-border-width: 5px;
-    -fx-border-radius: 15px;
-    -fx-background-radius: 15px;
+    -fx-border-width: 4px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
     -fx-cursor: hand;
-    -fx-padding: 12;
+    -fx-padding: 10;
 }
 
 /* 반응속도 카드 (노란색/금색) */
@@ -79,15 +79,14 @@
     -fx-background-color: linear-gradient(to bottom, #ffd60a 0%, #ffb703 50%, #ffd60a 100%);
     -fx-border-color: #d4a024;
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
-        dropshadow(gaussian, rgba(0, 0, 0, 0.8), 25, 0, 0, 12);
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
 }
 
 .card-reaction:hover {
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.6), 30, 0, 0, 0),
-        dropshadow(gaussian, rgba(255, 214, 10, 0.8), 30, 0, 0, 20);
-    -fx-translate-y: -5;
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(255, 214, 10, 0.6), 20, 0, 0, 15);
 }
 
 /* 회피게임 카드 (빨간색) */
@@ -95,15 +94,14 @@
     -fx-background-color: linear-gradient(to bottom, #ff6b6b 0%, #ee5a6f 50%, #ff6b6b 100%);
     -fx-border-color: #c92a2a;
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
-        dropshadow(gaussian, rgba(0, 0, 0, 0.8), 25, 0, 0, 12);
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
 }
 
 .card-dodge:hover {
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.6), 30, 0, 0, 0),
-        dropshadow(gaussian, rgba(255, 107, 107, 0.8), 30, 0, 0, 20);
-    -fx-translate-y: -5;
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(255, 107, 107, 0.6), 20, 0, 0, 15);
 }
 
 /* 기억력 카드 (녹색) */
@@ -111,15 +109,14 @@
     -fx-background-color: linear-gradient(to bottom, #74c69d 0%, #52b788 50%, #74c69d 100%);
     -fx-border-color: #2d6a4f;
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
-        dropshadow(gaussian, rgba(0, 0, 0, 0.8), 25, 0, 0, 12);
+        innershadow(gaussian, rgba(255, 255, 255, 0.4), 20, 0, 0, 0),
+        dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 8);
 }
 
 .card-memory:hover {
     -fx-effect: 
-        innershadow(gaussian, rgba(255, 255, 255, 0.6), 30, 0, 0, 0),
-        dropshadow(gaussian, rgba(116, 198, 157, 0.8), 30, 0, 0, 20);
-    -fx-translate-y: -5;
+        innershadow(gaussian, rgba(255, 255, 255, 0.5), 25, 0, 0, 0),
+        dropshadow(gaussian, rgba(116, 198, 157, 0.6), 20, 0, 0, 15);
 }
 
 /* 카드 내부 장식용 테두리 */

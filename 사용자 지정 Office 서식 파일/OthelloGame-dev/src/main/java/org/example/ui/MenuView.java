@@ -188,7 +188,7 @@ public class MenuView {
         menuScene.getStylesheets().add(getClass().getResource("/css/menu.css").toExternalForm());
         primaryStage.setScene(menuScene);
         primaryStage.setTitle("Othello Game - 메인 메뉴");
-        primaryStage.setMaximized(true); // 창 최대화
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 

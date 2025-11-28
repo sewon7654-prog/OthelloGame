@@ -1,0 +1,119 @@
+/* 미니게임 공통 스타일 */
+
+/* 게임 루트 컨테이너 */
+.minigame-root {
+    -fx-background-color: #2C3E50;
+    -fx-padding: 20px;
+}
+
+/* 게임 제목 */
+.minigame-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);
+}
+
+/* 점수 표시 */
+.minigame-score {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3498DB;
+}
+
+/* 시간 표시 */
+.minigame-timer {
+    -fx-font-size: 20px;
+    -fx-text-fill: #E74C3C;
+    -fx-font-weight: bold;
+}
+
+/* 게임 영역 */
+.minigame-area {
+    -fx-background-color: #34495E;
+    -fx-border-color: white;
+    -fx-border-width: 3px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+/* 게임 버튼 */
+.minigame-button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.minigame-button:hover {
+    -fx-background-color: #2980B9;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.minigame-button:pressed {
+    -fx-background-color: #21618C;
+}
+
+/* 타겟 버튼 (반응속도 게임용) */
+.minigame-target {
+    -fx-background-color: #E74C3C;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 50%;
+    -fx-background-radius: 50%;
+    -fx-cursor: hand;
+}
+
+.minigame-target:hover {
+    -fx-background-color: #C0392B;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* 성공 메시지 */
+.minigame-success {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2ECC71;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 15, 0, 0, 3);
+}
+
+/* 실패 메시지 */
+.minigame-fail {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E74C3C;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 15, 0, 0, 3);
+}
+
+/* 지시사항 텍스트 */
+.minigame-instruction {
+    -fx-font-size: 16px;
+    -fx-text-fill: #ECF0F1;
+    -fx-font-style: italic;
+}
+
+/* 난이도 표시 */
+.minigame-difficulty {
+    -fx-font-size: 14px;
+    -fx-text-fill: #F39C12;
+    -fx-font-weight: bold;
+}
+
+/* 관전 모드 표시 */
+.spectator-label {
+    -fx-font-size: 20px;
+    -fx-text-fill: #F39C12;
+    -fx-font-weight: bold;
+    -fx-background-color: rgba(0,0,0,0.7);
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+

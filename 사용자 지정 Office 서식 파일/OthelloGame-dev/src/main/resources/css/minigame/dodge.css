@@ -5,24 +5,24 @@
 
 /* ========== 게임 루트 ========== */
 .dodge-game-root {
-    -fx-background-color: transparent; /* 픽셀 아트 배경 사용 */
+    -fx-background-color: radial-gradient(center 50% 50%, radius 60%, #2a1a4a 0%, #1a0f2a 100%);
     -fx-padding: 20px;
     -fx-border-color: #8b4a9e;
-    -fx-border-width: 4px;
+    -fx-border-width: 6px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0, 0, 4);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 50, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 60, 0, 0, 20);
 }
 
 /* ========== 헤더 컨테이너 ========== */
 .dodge-header {
-    -fx-background-color: #4a2a6b; /* 단색 사용 */
+    -fx-background-color: linear-gradient(to bottom, #4a2a6b 0%, #2a1a4a 50%, #4a2a6b 100%);
     -fx-border-color: #8b4a9e;
-    -fx-border-width: 4px;
+    -fx-border-width: 6px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
     -fx-padding: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0, 0, 4);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 40, 0, 0, 15);
 }
 
 /* ========== 제목 ========== */
@@ -45,13 +45,13 @@
 
 /* ========== 통계 박스 ========== */
 .dodge-stat-box {
-    -fx-background-color: #5a3a7b; /* 단색 사용 */
+    -fx-background-color: linear-gradient(to bottom, #5a3a7b 0%, #4a2a6b 100%);
     -fx-padding: 10px 20px;
     -fx-border-color: #8b4a9e;
     -fx-border-width: 3px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
 }
 
 .dodge-stat-title {
@@ -83,8 +83,7 @@
     -fx-border-color: #8b4a9e;
     -fx-border-width: 4px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 0);
 }
 
 /* ========== 플레이어 ========== */
@@ -99,9 +98,9 @@
                 dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 4);
 }
 
-/* ========== 시작 버튼 (픽셀 아트 스타일) ========== */
+/* ========== 시작 버튼 ========== */
 .dodge-start-button {
-    -fx-background-color: #f4e5b7; /* 단색 사용 */
+    -fx-background-color: linear-gradient(to bottom, #f4e5b7 0%, #8b4a9e 100%);
     -fx-text-fill: #1e5128;
     -fx-font-family: "Orbitron", "Consolas", monospace;
     -fx-font-size: 13px;
@@ -113,17 +112,22 @@
     -fx-border-width: 4px;
     -fx-border-style: solid;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3);
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 6),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 6);
 }
 
 .dodge-start-button:hover {
     -fx-translate-y: -3;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 8, 0, 0, 5);
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 9),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.6), 25, 0, 0, 9);
 }
 
 .dodge-start-button:pressed {
     -fx-translate-y: 2;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 4, 0, 0, 2);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 2);
 }
 
 /* ========== 상태 레이블 ========== */
@@ -146,14 +150,13 @@
                 dropshadow(gaussian, rgba(139, 74, 158, 0.3), 8, 0, 0, 0);
 }
 
-/* ========== 결과 오버레이 (픽셀 아트 스타일) ========== */
+/* ========== 결과 오버레이 ========== */
 .dodge-result-overlay {
     -fx-background-color: rgba(26, 15, 42, 0.95);
     -fx-border-color: #8b4a9e;
-    -fx-border-width: 6px;
+    -fx-border-width: 8px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 10, 0, 0, 5);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 50, 0, 0, 0);
 }
 
 .dodge-result-label-success {
@@ -193,17 +196,17 @@
     -fx-effect: dropshadow(gaussian, rgba(139, 74, 158, 0.4), 10, 0, 0, 0);
 }
 
-/* ========== 관전 모드 (픽셀 아트 스타일) ========== */
+/* ========== 관전 모드 ========== */
 .dodge-spectator-label {
     -fx-font-family: "Orbitron", "Consolas", monospace;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #f4e5b7;
-    -fx-background-color: #8b6f3f; /* 단색 사용 */
+    -fx-background-color: linear-gradient(to bottom, #8b6f3f 0%, #6b5530 100%);
     -fx-padding: 10px 25px;
     -fx-border-color: #8b4a9e;
     -fx-border-width: 3px;
     -fx-border-style: solid;
-    -fx-border-radius: 0; /* 픽셀 아트 스타일 */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 6, 0, 0, 3);
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
 }

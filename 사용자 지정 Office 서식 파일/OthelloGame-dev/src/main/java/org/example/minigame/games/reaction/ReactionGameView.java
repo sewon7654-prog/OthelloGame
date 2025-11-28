@@ -188,12 +188,7 @@ public class ReactionGameView {
     }
 
     public void showScene(VBox root) {
-        // 픽셀 아트 배경 추가
-        javafx.scene.layout.StackPane backgroundPane = org.example.service.PixelArtUIService.createPixelArtBackground(750, 700);
-        javafx.scene.layout.StackPane rootPane = new javafx.scene.layout.StackPane();
-        rootPane.getChildren().addAll(backgroundPane, root);
-        
-        Scene scene = new Scene(rootPane, 750, 700);
+        Scene scene = new Scene(root, 750, 700);
         scene.getStylesheets().add(getClass().getResource("/css/minigame/reaction.css").toExternalForm());
         gameStage.setScene(scene);
         gameStage.show();

@@ -7,13 +7,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import org.example.model.User;
 import org.example.service.DatabaseService;
+import org.example.service.PixelArtUIService;
 
 /**
  * 로그인 및 회원가입 UI
@@ -47,14 +46,20 @@ public class LoginView {
      * 로그인 화면 표시
      */
     public void show() {
-        VBox mainLayout = new VBox(25);
+        // 픽셀 아트 배경 생성
+        double screenWidth = 1600;
+        double screenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
+        
+        VBox mainLayout = new VBox(30);
         mainLayout.setAlignment(Pos.CENTER);
         mainLayout.setPadding(new Insets(40));
         mainLayout.getStyleClass().add("login-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
 
-        // 타이틀
-        Label title = new Label("오셀로 게임");
-        title.getStyleClass().add("login-title");
+        // 타이틀 (픽셀 아트 로고)
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 800, 200);
+        titleLogo.setAlignment(Pos.CENTER);
         
         Label subtitle = new Label("로그인");
         subtitle.getStyleClass().add("login-subtitle");
@@ -62,28 +67,37 @@ public class LoginView {
         // 로그인 폼
         GridPane loginForm = createLoginForm();
 
-        // 회원가입 버튼
-        Button btnRegister = new Button("회원가입");
-        btnRegister.getStyleClass().add("register-button");
+        // 회원가입 버튼 (픽셀 아트 스타일)
+        StackPane btnRegisterPane = PixelArtUIService.createPixelArtButton("회원가입", 200, 60);
+        javafx.scene.control.Button btnRegister = new javafx.scene.control.Button();
+        btnRegister.setGraphic(btnRegisterPane);
+        btnRegister.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnRegister.setOnAction(e -> showRegisterView());
 
-        // 뒤로가기 버튼
-        Button btnBack = new Button("← 메뉴로");
-        btnBack.getStyleClass().add("back-button");
+        // 뒤로가기 버튼 (픽셀 아트 스타일)
+        StackPane btnBackPane = PixelArtUIService.createPixelArtButton("← 메뉴로", 200, 60);
+        javafx.scene.control.Button btnBack = new javafx.scene.control.Button();
+        btnBack.setGraphic(btnBackPane);
+        btnBack.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnBack.setOnAction(e -> {
             if (onBackToMenu != null) onBackToMenu.run();
         });
 
-        HBox buttonBox = new HBox(15, btnRegister, btnBack);
+        HBox buttonBox = new HBox(20, btnRegister, btnBack);
         buttonBox.setAlignment(Pos.CENTER);
 
-        mainLayout.getChildren().addAll(title, subtitle, loginForm, buttonBox);
+        mainLayout.getChildren().addAll(titleLogo, subtitle, loginForm, buttonBox);
+        
+        // 배경과 메뉴를 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
-        Scene scene = new Scene(mainLayout, 450, 500);
+        Scene scene = new Scene(rootPane, screenWidth, screenHeight);
         scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("로그인");
+        primaryStage.setMaximized(true);
     }
 
     /**
@@ -109,8 +123,11 @@ public class LoginView {
         pfPassword.setPromptText("비밀번호를 입력하세요");
         pfPassword.getStyleClass().add("form-input");
 
-        Button btnLogin = new Button("로그인");
-        btnLogin.getStyleClass().add("login-submit-button");
+        // 로그인 버튼 (픽셀 아트 스타일)
+        StackPane btnLoginPane = PixelArtUIService.createPixelArtButton("로그인", 300, 50);
+        javafx.scene.control.Button btnLogin = new javafx.scene.control.Button();
+        btnLogin.setGraphic(btnLoginPane);
+        btnLogin.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnLogin.setOnAction(e -> handleLogin(tfUserId.getText(), pfPassword.getText()));
 
         // Enter 키로 로그인
@@ -156,14 +173,20 @@ public class LoginView {
      * 회원가입 화면 표시
      */
     private void showRegisterView() {
-        VBox mainLayout = new VBox(25);
+        // 픽셀 아트 배경 생성
+        double screenWidth = 1600;
+        double screenHeight = 1000;
+        StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
+        
+        VBox mainLayout = new VBox(30);
         mainLayout.setAlignment(Pos.CENTER);
         mainLayout.setPadding(new Insets(40));
         mainLayout.getStyleClass().add("login-container");
+        mainLayout.setStyle("-fx-background-color: transparent;");
 
-        // 타이틀
-        Label title = new Label("오셀로 게임");
-        title.getStyleClass().add("login-title");
+        // 타이틀 (픽셀 아트 로고)
+        StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 800, 200);
+        titleLogo.setAlignment(Pos.CENTER);
         
         Label subtitle = new Label("회원가입");
         subtitle.getStyleClass().add("login-subtitle");
@@ -171,18 +194,25 @@ public class LoginView {
         // 회원가입 폼
         GridPane registerForm = createRegisterForm();
 
-        // 뒤로가기 버튼
-        Button btnBack = new Button("← 로그인 화면으로");
-        btnBack.getStyleClass().add("back-button");
+        // 뒤로가기 버튼 (픽셀 아트 스타일)
+        StackPane btnBackPane = PixelArtUIService.createPixelArtButton("← 로그인 화면으로", 250, 60);
+        javafx.scene.control.Button btnBack = new javafx.scene.control.Button();
+        btnBack.setGraphic(btnBackPane);
+        btnBack.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnBack.setOnAction(e -> show());
 
-        mainLayout.getChildren().addAll(title, subtitle, registerForm, btnBack);
+        mainLayout.getChildren().addAll(titleLogo, subtitle, registerForm, btnBack);
+        
+        // 배경과 메뉴를 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
-        Scene scene = new Scene(mainLayout, 500, 650);
+        Scene scene = new Scene(rootPane, screenWidth, screenHeight);
         scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         scene.getStylesheets().add(getClass().getResource("/css/login.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("회원가입");
+        primaryStage.setMaximized(true);
     }
 
     /**
@@ -204,8 +234,11 @@ public class LoginView {
         tfUserId.setPromptText("아이디 입력 (영문, 숫자)");
         tfUserId.getStyleClass().add("id-input");
         
-        Button btnCheckId = new Button("중복 확인");
-        btnCheckId.getStyleClass().add("check-id-button");
+        // 중복 확인 버튼 (픽셀 아트 스타일)
+        StackPane btnCheckIdPane = PixelArtUIService.createPixelArtButton("중복 확인", 120, 45);
+        javafx.scene.control.Button btnCheckId = new javafx.scene.control.Button();
+        btnCheckId.setGraphic(btnCheckIdPane);
+        btnCheckId.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnCheckId.setOnAction(e -> {
             String userId = tfUserId.getText();
             if (userId.isEmpty()) {
@@ -235,8 +268,11 @@ public class LoginView {
         pfPasswordConfirm.setPromptText("비밀번호 재입력");
         pfPasswordConfirm.getStyleClass().add("form-input");
 
-        Button btnRegister = new Button("가입하기");
-        btnRegister.getStyleClass().add("register-submit-button");
+        // 가입하기 버튼 (픽셀 아트 스타일)
+        StackPane btnRegisterPane = PixelArtUIService.createPixelArtButton("가입하기", 300, 50);
+        javafx.scene.control.Button btnRegister = new javafx.scene.control.Button();
+        btnRegister.setGraphic(btnRegisterPane);
+        btnRegister.setStyle("-fx-background-color: transparent; -fx-padding: 0;");
         btnRegister.setOnAction(e -> handleRegister(
             tfUserId.getText(), 
             pfPassword.getText(), 

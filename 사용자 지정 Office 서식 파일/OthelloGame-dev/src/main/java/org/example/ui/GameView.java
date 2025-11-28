@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public class GameView {
 
-    private static final int TILE_SIZE = 65; // 보드 크기 줄이기 (75 -> 65)
+    private static final int TILE_SIZE = 120; // 컴퓨터 화면에 맞게 더 크게
     private static final int WIDTH = 8;
 
     // Core Game Components
@@ -177,7 +177,7 @@ public class GameView {
         modeLabel.getStyleClass().add("mode-label");
         
         VBox topPanel = new VBox(8);
-        topPanel.setPadding(new Insets(8)); // 패딩 줄이기 (12 -> 8)
+        topPanel.setPadding(new Insets(12));
         topPanel.setAlignment(Pos.CENTER);
         topPanel.getStyleClass().add("game-top-panel");
         // 픽셀 아트 배경 적용
@@ -192,11 +192,11 @@ public class GameView {
         boardContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         BorderPane.setAlignment(boardContainer, Pos.CENTER);
 
-        // 화면 크기 계산 (메뉴 화면과 동일한 크기로 고정)
+        // 화면 크기 고정 (메뉴와 동일하게)
         double screenWidth = 1600;
         double screenHeight = 1000;
 
-        // 픽셀 아트 배경 생성 (메뉴 화면과 동일한 크기)
+        // 픽셀 아트 배경 생성
         StackPane backgroundPane = PixelArtUIService.createPixelArtBackground(screenWidth, screenHeight);
 
         mainLayout = new BorderPane();
@@ -212,8 +212,6 @@ public class GameView {
         // 로컬/온라인 모드: 찬스카드를 오른쪽에 배치
         if (mode == GameModel.Mode.LOCAL || mode == GameModel.Mode.ONLINE) {
             VBox rightPanel = createRightPanel(backButton);
-            BorderPane.setAlignment(rightPanel, Pos.TOP_CENTER); // 상단 정렬
-            BorderPane.setMargin(rightPanel, new Insets(0, 50, 0, 0)); // 오른쪽 마진 추가 (왼쪽으로 더 당기기)
             mainLayout.setRight(rightPanel);
             resetChanceCards();
         } else {
@@ -234,13 +232,13 @@ public class GameView {
         drawValidMoves();
         updateScoreDisplay();
 
-        // 화면 크기는 메뉴 화면과 동일하게 고정
+        // 화면 크기는 고정 값 사용
         Scene gameScene = new Scene(gameRootPane, screenWidth, screenHeight);
         gameScene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
         gameScene.getStylesheets().add(getClass().getResource("/css/game.css").toExternalForm());
         primaryStage.setScene(gameScene);
         primaryStage.setTitle("Othello Game - " + modeText);
-        primaryStage.setMaximized(true); // 창 최대화
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 
@@ -735,27 +733,39 @@ public class GameView {
     private StackPane createTile(int x, int y) {
         Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE);
         
-        // 픽셀 아트 스타일 - 밝은 색상, 단색 사용
+        // 이미지 기반 바둑판 디자인 - 녹색 체크무늬 패턴
         if ((x + y) % 2 == 0) {
-            // 밝은 연두색 타일 (픽셀 아트 스타일)
-            tile.setFill(Color.web("#B8E6B8")); // 밝은 연두색
+            // 밝은 연두색 타일 - 왼쪽 상단에서 오른쪽 하단으로 그라데이션
+            javafx.scene.paint.LinearGradient lightGreenGradient = new javafx.scene.paint.LinearGradient(
+                0, 0, 1, 1, true, null,
+                new javafx.scene.paint.Stop(0, Color.web("#A8D5BA")), // 왼쪽 상단 - 밝은 연두색
+                new javafx.scene.paint.Stop(0.5, Color.web("#8FBC8F")), // 중앙
+                new javafx.scene.paint.Stop(1, Color.web("#7CB68C"))  // 오른쪽 하단 - 약간 어두운 연두색
+            );
+            tile.setFill(lightGreenGradient);
         } else {
-            // 밝은 녹색 타일 (픽셀 아트 스타일)
-            tile.setFill(Color.web("#90D490")); // 밝은 녹색
+            // 어두운 녹색 타일 - 왼쪽 상단에서 오른쪽 하단으로 그라데이션
+            javafx.scene.paint.LinearGradient darkGreenGradient = new javafx.scene.paint.LinearGradient(
+                0, 0, 1, 1, true, null,
+                new javafx.scene.paint.Stop(0, Color.web("#6B8E6B")), // 왼쪽 상단 - 밝은 녹색
+                new javafx.scene.paint.Stop(0.5, Color.web("#556B55")), // 중앙
+                new javafx.scene.paint.Stop(1, Color.web("#4A5D4A"))  // 오른쪽 하단 - 어두운 녹색
+            );
+            tile.setFill(darkGreenGradient);
         }
         
-        // 명확한 테두리 (픽셀 아트 스타일)
-        tile.setStroke(Color.web("#5A8A5A")); // 어두운 녹색 테두리
-        tile.setStrokeWidth(2); // 더 두꺼운 테두리
-        tile.setArcWidth(0); // 둥근 모서리 제거 (픽셀 아트 느낌)
-        tile.setArcHeight(0);
+        // 테두리 - 어두운 녹색, 얇은 선
+        tile.setStroke(Color.web("#2F4F2F"));
+        tile.setStrokeWidth(1);
+        tile.setArcWidth(2);
+        tile.setArcHeight(2);
         
-        // 단순한 그림자 효과 (픽셀 아트 스타일)
+        // 타일 사이 구분선 효과를 위한 그림자
         javafx.scene.effect.DropShadow tileShadow = new javafx.scene.effect.DropShadow();
-        tileShadow.setRadius(2);
-        tileShadow.setColor(Color.web("#00000040")); // 약한 검은색 그림자
-        tileShadow.setOffsetX(1);
-        tileShadow.setOffsetY(1);
+        tileShadow.setRadius(1);
+        tileShadow.setColor(Color.web("#FFFFFF22")); // 밝은 선 효과
+        tileShadow.setOffsetX(0.5);
+        tileShadow.setOffsetY(0.5);
         tile.setEffect(tileShadow);
         
         return new StackPane(tile);
@@ -764,23 +774,49 @@ public class GameView {
     private Circle createPiece(Color color) {
         Circle piece = new Circle(TILE_SIZE * 0.4);
         
-        // 픽셀 아트 스타일 - 단색 사용, 그라데이션 제거
+        // 방사형 그라데이션으로 강한 3D 효과
         if (color == Color.BLACK || color.equals(customBlackColor)) {
-            // 흑돌 - 단색 검은색 (픽셀 아트 스타일)
-            piece.setFill(Color.web("#1A1A1A")); // 어두운 회색
-            piece.setStroke(Color.web("#000000")); // 검은색 테두리
+            // 흑돌 - 중앙 상단 하이라이트에서 바깥쪽으로 어두워지는 방사형 그라데이션
+            javafx.scene.paint.RadialGradient blackGradient = new javafx.scene.paint.RadialGradient(
+                0,  // focusAngle
+                0,  // focusDistance
+                0.3,  // centerX (약간 위쪽)
+                0.3,  // centerY (약간 위쪽)
+                0.5,  // radius
+                true,  // proportional
+                javafx.scene.paint.CycleMethod.NO_CYCLE,
+                new javafx.scene.paint.Stop(0, Color.web("#4A4A4A")), // 중앙 상단 - 어두운 회색 하이라이트
+                new javafx.scene.paint.Stop(0.3, Color.web("#2C2C2C")), // 중간
+                new javafx.scene.paint.Stop(0.6, Color.web("#1A1A1A")), // 바깥쪽
+                new javafx.scene.paint.Stop(1, Color.web("#000000"))  // 가장자리 - 깊은 검은색
+            );
+            piece.setFill(blackGradient);
+            piece.setStroke(Color.web("#0A0A0A"));
         } else {
-            // 백돌 - 단색 흰색 (픽셀 아트 스타일)
-            piece.setFill(Color.web("#FFFFFF")); // 밝은 흰색
-            piece.setStroke(Color.web("#E0E0E0")); // 밝은 회색 테두리
+            // 백돌 - 중앙 상단 하이라이트에서 바깥쪽으로 어두워지는 방사형 그라데이션
+            javafx.scene.paint.RadialGradient whiteGradient = new javafx.scene.paint.RadialGradient(
+                0,  // focusAngle
+                0,  // focusDistance
+                0.3,  // centerX (약간 위쪽)
+                0.3,  // centerY (약간 위쪽)
+                0.5,  // radius
+                true,  // proportional
+                javafx.scene.paint.CycleMethod.NO_CYCLE,
+                new javafx.scene.paint.Stop(0, Color.web("#FFFFFF")), // 중앙 상단 - 밝은 흰색 하이라이트
+                new javafx.scene.paint.Stop(0.3, Color.web("#F5F5F5")), // 중간
+                new javafx.scene.paint.Stop(0.6, Color.web("#E0E0E0")), // 바깥쪽
+                new javafx.scene.paint.Stop(1, Color.web("#C0C0C0"))  // 가장자리 - 부드러운 회색
+            );
+            piece.setFill(whiteGradient);
+            piece.setStroke(Color.web("#BDBDBD"));
         }
         
-        piece.setStrokeWidth(2); // 명확한 테두리
+        piece.setStrokeWidth(1.5);
         
-        // 단순한 그림자 효과 (픽셀 아트 스타일)
+        // 부드러운 그림자 효과 - 돌이 보드 위에 떠 있는 느낌
         javafx.scene.effect.DropShadow shadow = new javafx.scene.effect.DropShadow();
-        shadow.setRadius(3);
-        shadow.setColor(Color.web("#00000060")); // 약한 검은색 그림자
+        shadow.setRadius(4);
+        shadow.setColor(Color.web("#00000088")); // 더 진한 그림자
         shadow.setOffsetX(2);
         shadow.setOffsetY(2);
         piece.setEffect(shadow);
@@ -823,11 +859,9 @@ public class GameView {
     private VBox createRightPanel(Button backButton) {
         VBox rightPanel = new VBox(8);
         rightPanel.setPadding(new Insets(8, 10, 8, 10));
-        rightPanel.setAlignment(Pos.TOP_CENTER); // 상단 정렬로 변경
+        rightPanel.setAlignment(Pos.CENTER);
         rightPanel.getStyleClass().add("right-panel");
-        rightPanel.setMinWidth(200); // 너비 줄이기 (220 -> 200)
-        rightPanel.setMaxWidth(200); // 최대 너비도 설정
-        rightPanel.setMinHeight(800); // 최소 높이 명시적 설정
+        rightPanel.setMinWidth(220);
         
         // 카드 제목
         Label cardTitle = new Label("🎴 찬스카드");
@@ -1319,18 +1353,15 @@ public class GameView {
             System.out.println("[강제 수 실행] 실패 - 원래 턴(" + beforeTurn + ")으로 복귀");
         }
         
-        // 모든 UI 업데이트를 한 번에 실행 (동기화 보장)
-        Platform.runLater(() -> {
-            drawBoard();
-            updateScoreDisplay();
-            drawValidMoves();
-            
-            System.out.println("[강제 수 실행 후] 최종 턴: " + gameModel.getCurrentTurn());
-            
-            if (gameModel.isGameOver()) {
-                handleGameOver();
-            }
-        });
+        drawBoard();
+        updateScoreDisplay();
+        drawValidMoves();
+        
+        System.out.println("[강제 수 실행 후] 최종 턴: " + gameModel.getCurrentTurn());
+        
+        if (gameModel.isGameOver()) {
+            handleGameOver();
+        }
     }
 
     private void handleGameOver() {
