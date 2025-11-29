@@ -129,7 +129,7 @@ public class MemoryGameView {
         if (orbitronFont != null) {
             timeTitle.setFont(Font.font(orbitronFont.getFamily(), 11));
         }
-        timeLabel = new Label("0:30");
+        timeLabel = new Label("0:20");
         timeLabel.getStyleClass().add("memory-time-value");
         if (orbitronFont != null) {
             timeLabel.setFont(Font.font(orbitronFont.getFamily(), 18));

@@ -1,10 +1,8 @@
-﻿package org.example.minigame.games.reaction;
+package org.example.minigame.games.reaction;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,12 +16,12 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 /**
- * 반응속도 게임
+ * 반응?�도 게임
  */
 public class ReactionGame implements MinigameBase {
-    private static final long SUCCESS_THRESHOLD = 300; // 0.3초 이내 클릭 시 성공
-    private static final long MIN_WAIT_TIME = 1000;    // 최소 대기 1초
-    private static final long MAX_WAIT_TIME = 3000;    // 최대 대기 3초
+    private static final long SUCCESS_THRESHOLD = 300; // 0.3�??�내 ?�릭 ???�공 (밀리초) - ?�이???�승
+    private static final long MIN_WAIT_TIME = 1000; // 최소 ?��??�간 1�?
+    private static final long MAX_WAIT_TIME = 3000; // 최�? ?��??�간 3�?
 
     private ReactionGameView view;
     private boolean finished = false;
@@ -31,8 +29,6 @@ public class ReactionGame implements MinigameBase {
     private boolean gameStarted = false;
     private boolean isSpectator = false;
     private boolean applyingState = false;
-    // 한 라운드에서 첫 입력만 처리
-    private boolean hasResponded = false;
 
     private long startTime;
     private long buttonAppearTime;
@@ -58,7 +54,6 @@ public class ReactionGame implements MinigameBase {
 
         VBox root = view.createGameUI(this::startGame, this::onTargetClick);
         view.showScene(root);
-        registerKeyHandler();
         broadcastState();
     }
 
@@ -74,31 +69,30 @@ public class ReactionGame implements MinigameBase {
 
     private void startGame() {
         if (gameStarted) return;
-
+        
         gameStarted = true;
         finished = false;
         success = false;
-        hasResponded = false;
-
+        
         view.getStartButton().setVisible(false);
         view.getStatusLabel().setText("WAIT FOR THE BUTTON...");
         view.getTimeLabel().setText("--");
         view.getReactionTimeLabel().setText("--");
         view.getTargetButton().setVisible(false);
-
-        // 랜덤 대기시간 설정
+        
+        // ?�덤 ?��??�간 ?�정
         Random random = new Random();
         long range = MAX_WAIT_TIME - MIN_WAIT_TIME;
         waitTime = MIN_WAIT_TIME + Math.abs(random.nextLong() % range);
-
-        // 대기 카운트다운
+        
+        // ?��??�간 카운?�다??
         startWaitTimer();
-
-        // 랜덤 시간 후 버튼 표시
+        
+        // ?�덤 ?�간 ??버튼 ?�시
         PauseTransition waitTransition = new PauseTransition(Duration.millis(waitTime));
         waitTransition.setOnFinished(e -> showTargetButton());
         waitTransition.play();
-
+        
         broadcastState();
     }
 
@@ -120,14 +114,14 @@ public class ReactionGame implements MinigameBase {
 
     private void showTargetButton() {
         if (finished) return;
-
+        
         buttonAppearTime = System.currentTimeMillis();
         view.getTargetButton().setVisible(true);
         view.getStatusLabel().setText("CLICK NOW!");
         stopTimer();
         view.getTimeLabel().setText("0.00");
-
-        // 반응 시간 측정 시작
+        
+        // 반응 ?�간 측정 ?�작
         startReactionTimer();
         broadcastState();
     }
@@ -147,49 +141,30 @@ public class ReactionGame implements MinigameBase {
     }
 
     private void onTargetClick() {
-        if (finished || hasResponded) return;
-        hasResponded = true;
-
-        if (!view.getTargetButton().isVisible()) {
-            handleEarlyFail();
-            return;
-        }
-
-        processResponse(System.currentTimeMillis());
-    }
-
-    private void processResponse(long eventTime) {
-        reactionTime = eventTime - buttonAppearTime;
+        if (finished || !view.getTargetButton().isVisible()) return;
+        
+        long clickTime = System.currentTimeMillis();
+        reactionTime = clickTime - buttonAppearTime;
         finished = true;
         success = reactionTime <= SUCCESS_THRESHOLD;
-
+        
         stopTimer();
         view.getTargetButton().setVisible(false);
         view.getStatusLabel().setText(success ? "SUCCESS!" : "TOO SLOW!");
-
-        finishGame();
-        broadcastState();
-    }
-
-    private void handleEarlyFail() {
-        finished = true;
-        success = false;
-        stopTimer();
-        view.getTargetButton().setVisible(false);
-        view.getStatusLabel().setText("TOO EARLY!");
+        
         finishGame();
         broadcastState();
     }
 
     private void finishGame() {
         stopTimer();
-
+        
         long elapsed = (System.currentTimeMillis() - startTime) / 1000;
         StackPane overlay = view.createResultOverlay(success, reactionTime);
         StackPane root = new StackPane();
         root.getChildren().addAll(view.getGameStage().getScene().getRoot(), overlay);
         view.getGameStage().getScene().setRoot(root);
-
+        
         PauseTransition closeDelay = new PauseTransition(Duration.seconds(3));
         closeDelay.setOnFinished(e -> {
             closeGame();
@@ -211,7 +186,7 @@ public class ReactionGame implements MinigameBase {
     public String getStateJson() {
         return String.format(
             "{\"finished\":%b,\"success\":%b,\"started\":%b,\"reactionTime\":%d,\"waitTime\":%d,\"buttonVisible\":%b}",
-            finished, success, gameStarted, reactionTime, waitTime,
+            finished, success, gameStarted, reactionTime, waitTime, 
             view != null && view.getTargetButton() != null && view.getTargetButton().isVisible()
         );
     }
@@ -225,7 +200,7 @@ public class ReactionGame implements MinigameBase {
         reactionTime = parseInt(json, "reactionTime", reactionTime);
         waitTime = parseInt(json, "waitTime", waitTime);
         boolean buttonVisible = parseBoolean(json, "buttonVisible", false);
-
+        
         if (view != null) {
             if (finished) {
                 finishGame();
@@ -234,7 +209,7 @@ public class ReactionGame implements MinigameBase {
                 view.getStatusLabel().setText("CLICK NOW!");
             }
         }
-
+        
         applyingState = false;
     }
 
@@ -267,27 +242,6 @@ public class ReactionGame implements MinigameBase {
         }
     }
 
-    /**
-     * 키보드 입력(스페이스) 처리: 한 라운드당 첫 입력만 인정
-     */
-    private void registerKeyHandler() {
-        Scene scene = view.getGameStage().getScene();
-        if (scene == null) return;
-
-        scene.setOnKeyPressed(event -> {
-            if (hasResponded) return; // 연타/홀드 입력 무시
-
-            if (event.getCode() == KeyCode.SPACE) {
-                hasResponded = true;
-                if (view.getTargetButton().isVisible()) {
-                    processResponse(System.currentTimeMillis());
-                } else {
-                    handleEarlyFail();
-                }
-            }
-        });
-    }
-
     private int parseInt(String json, String key, long defaultValue) {
         String token = "\"" + key + "\":";
         int idx = json.indexOf(token);
@@ -315,3 +269,4 @@ public class ReactionGame implements MinigameBase {
         return defaultValue;
     }
 }
+
