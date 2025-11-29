@@ -7,9 +7,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -813,14 +811,7 @@ public class GameView {
     }
 
     private void showAlert(String title, String message) {
-        // Animation/레이아웃 처리 중에도 안전하게 다음 UI 펄스에서 실행
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, message, ButtonType.OK);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-            alert.setContentText(message);
-        alert.showAndWait();
-        });
+        GameDialog.showInfo(primaryStage, title, message);
     }
     
     /**
@@ -1356,3 +1347,6 @@ public class GameView {
             "흑: " + blackScore + " vs 백: " + whiteScore);
     }
 }
+
+
+

@@ -398,13 +398,13 @@ public class MenuView {
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(type, content, javafx.scene.control.ButtonType.OK);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(content);
-            alert.showAndWait();
-        });
+        if (type == Alert.AlertType.ERROR) {
+            GameDialog.showError(primaryStage, title, content);
+        } else if (type == Alert.AlertType.WARNING) {
+            GameDialog.showWarning(primaryStage, title, content);
+        } else {
+            GameDialog.showInfo(primaryStage, title, content);
+        }
     }
 }
 
