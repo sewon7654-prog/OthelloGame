@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 데이터베이스 연결 및 쿼리를 담당하는 서비스 클래스
- * MySQL 연동
+ * ?�이?�베?�스 ?�결 �?쿼리�??�당?�는 ?�비???�래??
+ * MySQL ?�동
  */
 public class DatabaseService {
 
-    // DB 연결 정보 (추후 application.properties로 분리 가능)
+    // DB ?�결 ?�보 (추후 application.properties�?분리 가??
     private static final String DB_URL = "jdbc:mysql://localhost:3306/othello_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "donghyeok3295"; // 실제 비밀번호로 변경 필요
+    private static final String DB_PASSWORD = "donghyeok3295"; // ?�제 비�?번호�?변�??�요
 
     private static DatabaseService instance;
     private Connection connection;
@@ -41,17 +41,17 @@ public class DatabaseService {
     }
 
     /**
-     * DB 연결
+     * DB ?�결
      */
     private void connect() {
         try {
-            // 먼저 데이터베이스가 없으면 생성
+            // 먼�? ?�이?�베?�스가 ?�으�??�성
             createDatabaseIfNotExists();
             
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             System.out.println("Database connected successfully!");
             
-            // 테이블 자동 생성
+            // ?�이�??�동 ?�성
             initializeTables();
         } catch (SQLException e) {
             System.err.println("Failed to connect to database: " + e.getMessage());
@@ -59,7 +59,7 @@ public class DatabaseService {
     }
 
     /**
-     * 데이터베이스가 없으면 생성
+     * ?�이?�베?�스가 ?�으�??�성
      */
     private void createDatabaseIfNotExists() {
         try {
@@ -76,7 +76,7 @@ public class DatabaseService {
     }
 
     /**
-     * 테이블 자동 생성 (앱 시작 시 실행)
+     * ?�이�??�동 ?�성 (???�작 ???�행)
      */
     private void initializeTables() {
         if (!isConnected()) return;
@@ -84,7 +84,7 @@ public class DatabaseService {
         try {
             Statement stmt = connection.createStatement();
             
-            // Users 테이블 생성
+            // Users ?�이�??�성
             String createUsersTable = """
                 CREATE TABLE IF NOT EXISTS Users (
                     user_id VARCHAR(50) PRIMARY KEY,
@@ -98,7 +98,7 @@ public class DatabaseService {
             stmt.executeUpdate(createUsersTable);
             System.out.println("Users table checked/created successfully!");
             
-            // GameRecords 테이블 생성
+            // GameRecords ?�이�??�성
             String createGameRecordsTable = """
                 CREATE TABLE IF NOT EXISTS GameRecords (
                     record_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -116,7 +116,7 @@ public class DatabaseService {
             stmt.executeUpdate(createGameRecordsTable);
             System.out.println("GameRecords table checked/created successfully!");
             
-            // UserSettings 테이블 생성
+            // UserSettings ?�이�??�성
             String createUserSettingsTable = """
                 CREATE TABLE IF NOT EXISTS UserSettings (
                     user_id VARCHAR(50) PRIMARY KEY,
@@ -128,13 +128,13 @@ public class DatabaseService {
             stmt.executeUpdate(createUserSettingsTable);
             System.out.println("UserSettings table checked/created successfully!");
             
-            // 인덱스 생성 (이미 있으면 무시됨)
+            // ?�덱???�성 (?��? ?�으�?무시??
             try {
                 stmt.executeUpdate("CREATE INDEX idx_match_date ON GameRecords(match_date)");
                 stmt.executeUpdate("CREATE INDEX idx_player1 ON GameRecords(player1_id)");
                 stmt.executeUpdate("CREATE INDEX idx_player2 ON GameRecords(player2_id)");
             } catch (SQLException e) {
-                // 인덱스가 이미 존재하는 경우 무시
+                // ?�덱?��? ?��? 존재?�는 경우 무시
             }
             
             stmt.close();
@@ -146,7 +146,7 @@ public class DatabaseService {
     }
 
     /**
-     * DB 연결 상태 확인
+     * DB ?�결 ?�태 ?�인
      */
     public boolean isConnected() {
         try {
@@ -157,7 +157,7 @@ public class DatabaseService {
     }
 
     /**
-     * 비밀번호 해싱 (SHA-256)
+     * 비�?번호 ?�싱 (SHA-256)
      */
     private String hashPassword(String password) {
         try {
@@ -175,10 +175,10 @@ public class DatabaseService {
         }
     }
 
-    // ========== User 관련 메서드 ==========
+    // ========== User 관??메서??==========
 
     /**
-     * 회원가입
+     * ?�원가??
      */
     public boolean registerUser(String userId, String password) {
         if (!isConnected()) connect();
@@ -197,7 +197,7 @@ public class DatabaseService {
     }
 
     /**
-     * 로그인
+     * 로그??
      */
     public User loginUser(String userId, String password) {
         if (!isConnected()) connect();
@@ -225,7 +225,7 @@ public class DatabaseService {
     }
 
     /**
-     * 사용자 ID 중복 확인
+     * ?�용??ID 중복 ?�인
      */
     public boolean isUserIdExists(String userId) {
         if (!isConnected()) connect();
@@ -244,7 +244,7 @@ public class DatabaseService {
     }
 
     /**
-     * 사용자 정보 조회
+     * ?�용???�보 조회
      */
     public User getUserInfo(String userId) {
         if (!isConnected()) connect();
@@ -270,21 +270,21 @@ public class DatabaseService {
     }
 
     /**
-     * 전적 업데이트 (승리)
+     * ?�적 ?�데?�트 (?�리)
      */
     public void updateWin(String userId) {
         updateStats(userId, "win_count");
     }
 
     /**
-     * 전적 업데이트 (패배)
+     * ?�적 ?�데?�트 (?�배)
      */
     public void updateLoss(String userId) {
         updateStats(userId, "loss_count");
     }
 
     /**
-     * 전적 업데이트 (무승부)
+     * ?�적 ?�데?�트 (무승부)
      */
     public void updateDraw(String userId) {
         updateStats(userId, "draw_count");
@@ -303,10 +303,10 @@ public class DatabaseService {
         }
     }
 
-    // ========== GameRecords 관련 메서드 ==========
+    // ========== GameRecords 관??메서??==========
 
     /**
-     * 게임 결과 저장
+     * 게임 결과 ?�??
      */
     public void saveGameRecord(String player1Id, String player2Id, String winnerId, 
                                int finalScoreBlack, int finalScoreWhite, String moveSequenceJson) {
@@ -329,7 +329,7 @@ public class DatabaseService {
     }
 
     /**
-     * 사용자의 최근 게임 기록 조회
+     * ?�용?�의 최근 게임 기록 조회
      */
     public List<String> getUserGameHistory(String userId, int limit) {
         if (!isConnected()) connect();
@@ -351,7 +351,7 @@ public class DatabaseService {
                 int whiteScore = rs.getInt("final_score_white");
                 Timestamp matchDate = rs.getTimestamp("match_date");
                 
-                String record = String.format("%s vs %s | 승자: %s | %d:%d | %s", 
+                String record = String.format("%s vs %s | ?�자: %s | %d:%d | %s", 
                     player1, player2, winner, blackScore, whiteScore, matchDate);
                 history.add(record);
             }
@@ -362,12 +362,12 @@ public class DatabaseService {
     }
 
     /**
-     * 사용자 설정 저장
+     * ?�용???�정 ?�??
      */
     public boolean saveUserSettings(String userId, Map<String, String> settings) {
         if (!isConnected()) connect();
         
-        // Map을 JSON 형식으로 변환 (간단한 구현)
+        // Map??JSON ?�식?�로 변??(간단??구현)
         StringBuilder json = new StringBuilder("{");
         boolean first = true;
         for (Map.Entry<String, String> entry : settings.entrySet()) {
@@ -397,7 +397,7 @@ public class DatabaseService {
     }
     
     /**
-     * 사용자 설정 불러오기
+     * ?�용???�정 불러?�기
      */
     public Map<String, String> getUserSettings(String userId) {
         if (!isConnected()) connect();
@@ -418,14 +418,14 @@ public class DatabaseService {
     }
     
     /**
-     * 간단한 JSON 파싱 (실제로는 JSON 라이브러리 사용 권장)
+     * 간단??JSON ?�싱 (?�제로는 JSON ?�이브러�??�용 권장)
      */
     private Map<String, String> parseSettingsJson(String json) {
         Map<String, String> settings = new HashMap<>();
         if (json == null || json.isEmpty()) return settings;
         
         try {
-            // 간단한 파싱: {"key":"value","key2":"value2"}
+            // 간단???�싱: {"key":"value","key2":"value2"}
             json = json.trim().replace("{", "").replace("}", "");
             String[] pairs = json.split(",");
             for (String pair : pairs) {
@@ -441,17 +441,9 @@ public class DatabaseService {
         }
         return settings;
     }
-
-    // JSON 문자열 이스케이프
-    private String escapeJson(String text) {
-        if (text == null) return "";
-        return text
-            .replace("\\", "\\\\")
-            .replace("\"", "\\\"");
-    }
     
     /**
-     * 연결 종료
+     * ?�결 종료
      */
     public void close() {
         try {

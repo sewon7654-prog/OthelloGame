@@ -764,35 +764,23 @@ public class GameView {
         return new StackPane(tile);
     }
 
-    private Circle createPiece(Color color) {
+                private Circle createPiece(Color color) {
         Circle piece = new Circle(TILE_SIZE * 0.4);
-        
-        // 픽셀 아트 스타일 - 단색 돌 (그라데이션 제거)
-        if (color == Color.BLACK || color.equals(customBlackColor)) {
-            // 흑돌 - 단색 검은색 (픽셀 아트 스타일)
-            piece.setFill(Color.web("#1A1A1A")); // 어두운 검은색
-            piece.setStroke(Color.web("#000000")); // 검은색 테두리
-        } else {
-            // 백돌 - 단색 흰색 (픽셀 아트 스타일)
-            piece.setFill(Color.web("#F5F5F5")); // 밝은 흰색
-            piece.setStroke(Color.web("#CCCCCC")); // 회색 테두리
-        }
-        
-        // 픽셀 아트 스타일 테두리 - 두꺼운 명확한 선
-        piece.setStrokeWidth(3); // 두꺼운 테두리
-        
-        // 픽셀 아트 스타일 그림자 - 단순하고 명확한 그림자
+
+        // 전달된 색상을 그대로 사용하고, 테두리는 약간 어둡게 적용
+        piece.setFill(color);
+        piece.setStroke(color.darker());
+        piece.setStrokeWidth(3);
+
         javafx.scene.effect.DropShadow shadow = new javafx.scene.effect.DropShadow();
         shadow.setRadius(3);
-        shadow.setColor(Color.web("#000000AA")); // 진한 검은색 그림자
-        shadow.setOffsetX(3);
-        shadow.setOffsetY(3);
+        shadow.setOffsetX(1);
+        shadow.setOffsetY(2);
         piece.setEffect(shadow);
-        
+
         return piece;
     }
-
-    private Color getColorForPiece(int piece) {
+private Color getColorForPiece(int piece) {
         if (piece == 1) return customBlackColor;
         if (piece == 2) return customWhiteColor;
         return Color.TRANSPARENT;
@@ -1347,6 +1335,7 @@ public class GameView {
             "흑: " + blackScore + " vs 백: " + whiteScore);
     }
 }
+
 
 
 

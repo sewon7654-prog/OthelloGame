@@ -223,7 +223,13 @@ public class MenuView {
         }
 
         SettingsView settingsView = new SettingsView(primaryStage, currentUser);
-        settingsView.setOnBackToMenu(this::show);
+        settingsView.setOnBackToMenu(() -> {
+            // 설정 저장 후 돌아올 때 최신 사용자 설정(돌 색 등)을 다시 GameView에 반영
+            if (currentUser != null) {
+                gameView.setCurrentUser(currentUser);
+            }
+            show();
+        });
         settingsView.show();
     }
 
