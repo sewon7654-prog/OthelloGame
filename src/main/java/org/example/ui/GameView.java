@@ -1,4 +1,4 @@
-package org.example.ui;
+﻿package org.example.ui;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -16,7 +16,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.example.model.GameModel;
 import org.example.model.User;
@@ -242,7 +241,7 @@ public class GameView {
         primaryStage.setTitle("Othello Game - " + modeText);
         
         // 창 모드 설정 (창 제어 버튼 표시)
-        primaryStage.initStyle(StageStyle.DECORATED); // 창 제어 버튼 표시
+        // initStyle은 App 시작 시 1회만 설정 가능하므로 여기서는 호출하지 않는다
         primaryStage.setFullScreen(false); // 전체화면 아님
         primaryStage.setResizable(true); // 크기 조절 가능
         primaryStage.setMinWidth(screenWidth);

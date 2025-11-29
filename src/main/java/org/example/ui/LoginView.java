@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.example.model.User;
 import org.example.service.DatabaseService;
 import org.example.service.ButtonEffectService;
@@ -107,7 +106,6 @@ public class LoginView {
         primaryStage.setTitle("로그인");
         
         // 창 모드 설정
-        primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(true);
         primaryStage.setMinWidth(screenWidth);
@@ -234,7 +232,6 @@ public class LoginView {
         primaryStage.setTitle("회원가입");
         
         // 창 모드 설정
-        primaryStage.initStyle(StageStyle.DECORATED);
         primaryStage.setFullScreen(false);
         primaryStage.setResizable(true);
         primaryStage.setMinWidth(screenWidth);
