@@ -1,6 +1,5 @@
-﻿package org.example.ui;
+package org.example.ui;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +19,7 @@ import org.example.model.User;
 import org.example.service.ConfigService;
 import org.example.service.ButtonEffectService;
 import org.example.service.PixelArtUIService;
+import org.example.service.SoundService;
 
 import java.util.Optional;
 
@@ -33,11 +33,13 @@ public class MenuView {
     private GameView gameView;
     private LoginView loginView;
     private User currentUser; // 현재 로그인한 사용자
+    private SoundService soundService;
 
     public MenuView(Stage stage, GameView gameView) {
         this.primaryStage = stage;
         this.gameView = gameView;
         this.loginView = new LoginView(stage);
+        this.soundService = SoundService.getInstance();
         
         // 로그인 성공 시 메뉴로 돌아오기
         loginView.setOnLoginSuccess(() -> {
@@ -68,10 +70,6 @@ public class MenuView {
         mainLayout.setPadding(new Insets(60));
         mainLayout.getStyleClass().add("menu-container");
         mainLayout.setStyle("-fx-background-color: transparent;");
-        
-        // 배경과 메뉴를 스택으로 합치기
-        StackPane rootPane = new StackPane();
-        rootPane.getChildren().addAll(backgroundPane, mainLayout);
 
         // 타이틀 (픽셀 아트 로고 - 이미지처럼 큰 픽셀 폰트)
         StackPane titleLogo = PixelArtUIService.createLargePixelArtLogo("오셀로 게임", 1200, 280);
@@ -109,15 +107,65 @@ public class MenuView {
         ButtonEffectService.addPixelArtButtonEffects(btnLocalWrapper);
         ButtonEffectService.addPixelArtButtonEffects(btnOnlineWrapper);
         ButtonEffectService.addPixelArtButtonEffects(btnAIWrapper);
+
+        // 버튼 클릭 이벤트 (파티클 효과 추가 전에 설정)
+        btnLocalWrapper.setOnAction(e -> gameView.show(GameModel.Mode.LOCAL));
+        btnOnlineWrapper.setOnAction(e -> startOnlineMatch());
+        btnAIWrapper.setOnAction(e -> showAIDifficultyMenu());
+        
+        // 파티클 효과 추가 (이벤트 핸들러 설정 후)
         ButtonEffectService.addClickParticleEffect(btnLocalWrapper);
         ButtonEffectService.addClickParticleEffect(btnOnlineWrapper);
         ButtonEffectService.addClickParticleEffect(btnAIWrapper);
 
-        // 버튼 클릭 이벤트
-        btnLocalWrapper.setOnAction(e -> gameView.show(GameModel.Mode.LOCAL));
-        btnOnlineWrapper.setOnAction(e -> startOnlineMatch());
-        btnAIWrapper.setOnAction(e -> showAIDifficultyMenu());
-
+        // BGM을 먼저 재생 (버튼 상태를 올바르게 표시하기 위해)
+        soundService.playBGM();
+        
+        // BGM 토글 버튼 (우측 상단)
+        // BGM이 재생 중이므로 "🔊 BGM 끄기"로 시작
+        final StackPane[] btnBGMPaneRef = {PixelArtUIService.createPixelArtButton("🔊 BGM 끄기", 200, 60)};
+        javafx.scene.control.Button btnBGMWrapper = new javafx.scene.control.Button();
+        btnBGMWrapper.setGraphic(btnBGMPaneRef[0]);
+        btnBGMWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
+        btnBGMWrapper.setPrefSize(200, 60);
+        ButtonEffectService.addPixelArtButtonEffects(btnBGMWrapper);
+        
+        // BGM 토글 이벤트 핸들러 (파티클 효과 추가 전에 설정)
+        javafx.event.EventHandler<javafx.event.ActionEvent> bgmToggleHandler = e -> {
+            // 실제 BGM 상태 확인
+            boolean isPlaying = soundService.isBGMPlaying();
+            if (isPlaying) {
+                soundService.stopBGM();
+                btnBGMPaneRef[0] = PixelArtUIService.createPixelArtButton("🔇 BGM 켜기", 200, 60);
+            } else {
+                soundService.playBGM();
+                btnBGMPaneRef[0] = PixelArtUIService.createPixelArtButton("🔊 BGM 끄기", 200, 60);
+            }
+            btnBGMWrapper.setGraphic(btnBGMPaneRef[0]);
+            // 이벤트 핸들러는 다시 추가하지 않음 (기존 핸들러 유지)
+        };
+        
+        btnBGMWrapper.setOnAction(bgmToggleHandler);
+        
+        // 파티클 효과 추가 (이벤트 핸들러 설정 후)
+        ButtonEffectService.addClickParticleEffect(btnBGMWrapper);
+        
+        // 배경과 메뉴를 스택으로 합치기
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().addAll(backgroundPane, mainLayout);
+        
+        // BGM 버튼을 우측 상단에 배치
+        // AnchorPane을 사용하여 정확한 위치에 배치하고 다른 버튼을 가리지 않도록 함
+        javafx.scene.layout.AnchorPane topRightPane = new javafx.scene.layout.AnchorPane();
+        topRightPane.setPickOnBounds(false); // 빈 영역은 마우스 이벤트를 통과시킴
+        topRightPane.getChildren().add(btnBGMWrapper);
+        // 우측 상단에 배치
+        javafx.scene.layout.AnchorPane.setRightAnchor(btnBGMWrapper, 20.0);
+        javafx.scene.layout.AnchorPane.setTopAnchor(btnBGMWrapper, 20.0);
+        
+        // BGM 버튼을 맨 위에 추가
+        rootPane.getChildren().add(topRightPane);
+        
         // 계정 관련 버튼들
         HBox accountButtons = new HBox(15);
         accountButtons.setAlignment(Pos.CENTER);
@@ -130,8 +178,8 @@ public class MenuView {
             btnLoginWrapper.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0;");
             btnLoginWrapper.setPrefSize(400, 80);
             ButtonEffectService.addPixelArtButtonEffects(btnLoginWrapper);
-            ButtonEffectService.addClickParticleEffect(btnLoginWrapper);
             btnLoginWrapper.setOnAction(e -> loginView.show());
+            ButtonEffectService.addClickParticleEffect(btnLoginWrapper);
             accountButtons.getChildren().add(btnLoginWrapper);
         } else {
             // 로그인 후
@@ -158,10 +206,8 @@ public class MenuView {
             ButtonEffectService.addPixelArtButtonEffects(btnStatsWrapper);
             ButtonEffectService.addPixelArtButtonEffects(btnSettingsWrapper);
             ButtonEffectService.addPixelArtButtonEffects(btnLogoutWrapper);
-            ButtonEffectService.addClickParticleEffect(btnStatsWrapper);
-            ButtonEffectService.addClickParticleEffect(btnSettingsWrapper);
-            ButtonEffectService.addClickParticleEffect(btnLogoutWrapper);
 
+            // 버튼 클릭 이벤트 (파티클 효과 추가 전에 설정)
             btnStatsWrapper.setOnAction(e -> showStats());
             btnSettingsWrapper.setOnAction(e -> showSettings());
             btnLogoutWrapper.setOnAction(e -> {
@@ -170,6 +216,11 @@ public class MenuView {
                 showAlert(Alert.AlertType.INFORMATION, "로그아웃", "로그아웃되었습니다.");
                 show();
             });
+            
+            // 파티클 효과 추가 (이벤트 핸들러 설정 후)
+            ButtonEffectService.addClickParticleEffect(btnStatsWrapper);
+            ButtonEffectService.addClickParticleEffect(btnSettingsWrapper);
+            ButtonEffectService.addClickParticleEffect(btnLogoutWrapper);
 
             accountButtons.getChildren().addAll(btnStatsWrapper, btnSettingsWrapper, btnLogoutWrapper);
         }
@@ -287,11 +338,8 @@ public class MenuView {
         ButtonEffectService.addPixelArtButtonEffects(btnMediumWrapper);
         ButtonEffectService.addPixelArtButtonEffects(btnHardWrapper);
         ButtonEffectService.addPixelArtButtonEffects(btnBackWrapper);
-        ButtonEffectService.addClickParticleEffect(btnEasyWrapper);
-        ButtonEffectService.addClickParticleEffect(btnMediumWrapper);
-        ButtonEffectService.addClickParticleEffect(btnHardWrapper);
-        ButtonEffectService.addClickParticleEffect(btnBackWrapper);
 
+        // 버튼 클릭 이벤트 (파티클 효과 추가 전에 설정)
         btnEasyWrapper.setOnAction(e -> {
             gameView.setAIDifficulty(GameModel.Difficulty.EASY);
             gameView.show(GameModel.Mode.AI);
@@ -305,6 +353,12 @@ public class MenuView {
             gameView.show(GameModel.Mode.AI);
         });
         btnBackWrapper.setOnAction(e -> show());
+        
+        // 파티클 효과 추가 (이벤트 핸들러 설정 후)
+        ButtonEffectService.addClickParticleEffect(btnEasyWrapper);
+        ButtonEffectService.addClickParticleEffect(btnMediumWrapper);
+        ButtonEffectService.addClickParticleEffect(btnHardWrapper);
+        ButtonEffectService.addClickParticleEffect(btnBackWrapper);
 
         menuBox.getChildren().addAll(titleLogo, btnEasyWrapper, btnMediumWrapper, btnHardWrapper, btnBackWrapper);
 

@@ -1,4 +1,4 @@
-﻿import re, pathlib
+import re, pathlib
 path = pathlib.Path('src/main/java/org/example/ui/GameView.java')
 text = path.read_text(encoding='utf-8')
 pattern = re.compile(r"if \(cardUsed\[cardIndex\]\) \{.*?return;\s*\}", re.S)

@@ -1,4 +1,4 @@
-﻿package org.example.ui;
+package org.example.ui;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -160,6 +160,28 @@ public class GameView {
         ButtonEffectService.addPixelArtButtonEffects(backButton);
         ButtonEffectService.addClickParticleEffect(backButton);
         backButton.setOnAction(e -> {
+            // 게임이 종료된 상태면 종료 사운드 재생
+            if (gameModel.isGameOver()) {
+                try {
+                    System.out.println("[게임 종료] 종료 사운드 재생 시도");
+                    soundService.playGameOverSound();
+                    System.out.println("[게임 종료] 종료 사운드 재생 완료");
+                } catch (Exception ex) {
+                    System.err.println("게임 종료 사운드 재생 실패: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            } else {
+                // 게임이 진행 중이어도 메뉴로 돌아갈 때 종료 사운드 재생
+                try {
+                    System.out.println("[메뉴 복귀] 종료 사운드 재생 시도");
+                    soundService.playGameOverSound();
+                    System.out.println("[메뉴 복귀] 종료 사운드 재생 완료");
+                } catch (Exception ex) {
+                    System.err.println("게임 종료 사운드 재생 실패: " + ex.getMessage());
+                    ex.printStackTrace();
+                }
+            }
+            soundService.stopBGM();
             if (onBackToMenu != null) onBackToMenu.run();
         });
 
@@ -273,6 +295,7 @@ public class GameView {
             updateMatchingStatus("서버(" + serverIp + ":" + serverPort + ")에 연결되었습니다. 상대방을 기다리는 중...");
         } else {
             showAlert("Connection Failed", "서버(" + serverIp + ":" + serverPort + ") 접속에 실패했습니다. NetworkServer를 실행했는지 확인하세요.");
+            soundService.stopBGM();
             if (onBackToMenu != null) onBackToMenu.run();
         }
     }
@@ -376,6 +399,7 @@ public class GameView {
                     networkClient.interrupt();
                 } catch (Exception ex) {}
             }
+            soundService.stopBGM();
             if (onBackToMenu != null) onBackToMenu.run();
         });
         
@@ -1142,24 +1166,45 @@ private Color getColorForPiece(int piece) {
             if (result.isSuccess()) {
                 handleMinigameSuccess(result, minigameOwnerColor);
             } else {
-                showAlert("미니게임 실패",
-                    "아쉽게도 미니게임에 실패했습니다.\n" +
-                    "점수: " + result.getScore() + "\n" +
-                    "다음 기회를 노려보세요.");
+                // 미니게임 패배 사운드 재생 (게임 종료 사운드 사용)
+                Platform.runLater(() -> {
+                    try {
+                        System.out.println("[미니게임] 패배 사운드 재생 시도 (게임 종료 사운드 사용)");
+                        soundService.playGameOverSound();
+                        System.out.println("[미니게임] 패배 사운드 재생 완료");
+                    } catch (Exception e) {
+                        System.err.println("미니게임 패배 사운드 재생 실패: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                    
+                    showAlert("미니게임 실패",
+                        "아쉽게도 미니게임에 실패했습니다.\n" +
+                        "점수: " + result.getScore() + "\n" +
+                        "다음 기회를 노려보세요.");
 
-                if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
-                    String resultMessage = org.example.minigame.network.MinigameProtocol
-                        .createResultMessage(false, result.getScore(), result.getTimeElapsed(), -1, -1);
-                    networkClient.sendMinigameResult(resultMessage);
-                }
+                    if (gameModel.getGameMode() == GameModel.Mode.ONLINE && networkClient != null) {
+                        String resultMessage = org.example.minigame.network.MinigameProtocol
+                            .createResultMessage(false, result.getScore(), result.getTimeElapsed(), -1, -1);
+                        networkClient.sendMinigameResult(resultMessage);
+                    }
+                });
             }
             minigameOwnerColor = 0;
         });
     }
 
     private void handleMinigameSuccess(org.example.minigame.base.MinigameResult result, int ownerColor) {
+        // 미니게임 승리 사운드 재생 (즉시 재생)
+        try {
+            soundService.playMinigameWinSound();
+        } catch (Exception e) {
+            System.err.println("미니게임 승리 사운드 재생 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
         // Platform.runLater로 UI 스레드에서 실행 보장 (실시간 업데이트)
         Platform.runLater(() -> {
+            
             // 1) 먼저 이점 적용: 상대 돌 강제 수 + 턴 유지
             int opponentColor = ownerColor == 1 ? 2 : 1;
             
@@ -1318,6 +1363,15 @@ private Color getColorForPiece(int piece) {
     }
 
     private void handleGameOver() {
+        // 게임 종료 사운드 재생
+        try {
+            soundService.playGameOverSound();
+        } catch (Exception e) {
+            System.err.println("게임 종료 사운드 재생 실패: " + e.getMessage());
+        }
+        // BGM 중지
+        soundService.stopBGM();
+        
         int blackScore = gameModel.getScore(1); // 1 = BLACK
         int whiteScore = gameModel.getScore(2); // 2 = WHITE
         

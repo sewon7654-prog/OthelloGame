@@ -130,10 +130,15 @@ public class ButtonEffectService {
     
     /**
      * 버튼 클릭 시 파티클 효과 추가
+     * 기존 이벤트 핸들러를 유지하면서 파티클 효과를 추가합니다.
      */
     public static void addClickParticleEffect(Button button) {
+        // 기존 이벤트 핸들러 저장
+        javafx.event.EventHandler<javafx.event.ActionEvent> existingHandler = button.getOnAction();
+        
+        // 파티클 효과와 기존 핸들러를 함께 실행
         button.setOnAction(e -> {
-            // 클릭 위치에서 작은 파티클 효과
+            // 파티클 효과
             javafx.scene.layout.Pane parent = (javafx.scene.layout.Pane) button.getParent();
             if (parent != null) {
                 javafx.geometry.Bounds bounds = button.localToScene(button.getBoundsInLocal());
@@ -172,6 +177,11 @@ public class ButtonEffectService {
                     particleTransition.getChildren().addAll(translate, fade);
                     particleTransition.play();
                 }
+            }
+            
+            // 기존 이벤트 핸들러 실행
+            if (existingHandler != null) {
+                existingHandler.handle(e);
             }
         });
     }

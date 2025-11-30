@@ -1,4 +1,4 @@
-﻿package org.example.minigame.games.reaction;
+package org.example.minigame.games.reaction;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
