@@ -620,7 +620,6 @@ public class GameView {
                 }
                 
                 updateGameViewAfterMove();
-                showAlert("Your Turn", "상대방이 수를 두었습니다. 이제 당신 차례입니다.");
             } else {
                 showAlert("Sync Error", "상대방의 수 처리 중 오류 발생.");
             }

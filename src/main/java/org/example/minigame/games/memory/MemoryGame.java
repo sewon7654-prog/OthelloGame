@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 public class MemoryGame implements MinigameBase {
     private static final int GRID_SIZE = 4;
     private static final int TOTAL_PAIRS = (GRID_SIZE * GRID_SIZE) / 2;
-    private static final int GAME_TIME_LIMIT = 20; // seconds
+    private static final int GAME_TIME_LIMIT = 35; // seconds
 
     private int timeRemaining = GAME_TIME_LIMIT;
     private int pairsFound = 0;
