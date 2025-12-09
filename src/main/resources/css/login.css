@@ -1,0 +1,175 @@
+/* 로그인/회원가입 화면 스타일 - 게임 UI와 통일된 녹색 테마 */
+
+.login-container {
+    -fx-background-color: linear-gradient(to bottom, #4A5D4A, #2F4F2F);
+}
+
+.login-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 3);
+}
+
+.login-subtitle {
+    -fx-font-size: 18px;
+    -fx-text-fill: #A8D5BA;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 1);
+}
+
+/* 폼 컨테이너 */
+.form-container {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 255, 255, 0.98), rgba(240, 248, 240, 0.95));
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 12, 0, 0, 4);
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 2px;
+    -fx-border-radius: 15px;
+}
+
+/* 폼 레이블 */
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2F4F2F;
+}
+
+/* 입력 필드 */
+.form-input {
+    -fx-font-size: 14px;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 40px;
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-color: #6B8E6B;
+    -fx-border-radius: 8px;
+    -fx-border-width: 2px;
+}
+
+.form-input:focused {
+    -fx-border-color: #2F4F2F;
+    -fx-effect: dropshadow(gaussian, rgba(47, 79, 47, 0.3), 5, 0, 0, 2);
+}
+
+/* 로그인 버튼 */
+.login-submit-button {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 45px;
+    -fx-background-color: linear-gradient(to bottom, #8FBC8F, #6B8E6B);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 3);
+    -fx-cursor: hand;
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+.login-submit-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #A8D5BA, #7CB68C);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 12, 0, 0, 4);
+}
+
+/* 회원가입 버튼 */
+.register-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+    -fx-min-height: 35px;
+    -fx-background-color: linear-gradient(to bottom, #8FBC8F, #6B8E6B);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+}
+
+.register-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #A8D5BA, #7CB68C);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 7, 0, 0, 3);
+}
+
+/* 중복 확인 버튼 */
+.check-id-button {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 80px;
+    -fx-pref-height: 40px;
+    -fx-background-color: linear-gradient(to bottom, #6B8E6B, #4A5D4A);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+}
+
+.check-id-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #7CB68C, #556B55);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+}
+
+/* 가입하기 버튼 */
+.register-submit-button {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 250px;
+    -fx-pref-height: 45px;
+    -fx-background-color: linear-gradient(to bottom, #8FBC8F, #6B8E6B);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0, 0, 3);
+    -fx-cursor: hand;
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+}
+
+.register-submit-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #A8D5BA, #7CB68C);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 12, 0, 0, 4);
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 120px;
+    -fx-min-height: 35px;
+    -fx-background-color: linear-gradient(to bottom, #6B8E6B, #4A5D4A);
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 2);
+    -fx-cursor: hand;
+    -fx-border-color: #2F4F2F;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 8px;
+}
+
+.back-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #7CB68C, #556B55);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 7, 0, 0, 3);
+}
+
+/* 아이디 입력 필드 (작은 크기) */
+.id-input {
+    -fx-font-size: 14px;
+    -fx-pref-width: 180px;
+    -fx-pref-height: 40px;
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-color: #6B8E6B;
+    -fx-border-radius: 8px;
+    -fx-border-width: 2px;
+}
+
+.id-input:focused {
+    -fx-border-color: #2F4F2F;
+    -fx-effect: dropshadow(gaussian, rgba(47, 79, 47, 0.3), 5, 0, 0, 2);
+}
+

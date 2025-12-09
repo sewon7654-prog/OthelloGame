@@ -1,0 +1,212 @@
+/* ============================================
+   DODGE GAME - 레트로 클래식 스타일
+   폰트: Cinzel (제목), Orbitron (본문)
+   ============================================ */
+
+/* ========== 게임 루트 ========== */
+.dodge-game-root {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 60%, #2a1a4a 0%, #1a0f2a 100%);
+    -fx-padding: 20px;
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 6px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 50, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 60, 0, 0, 20);
+}
+
+/* ========== 헤더 컨테이너 ========== */
+.dodge-header {
+    -fx-background-color: linear-gradient(to bottom, #4a2a6b 0%, #2a1a4a 50%, #4a2a6b 100%);
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 6px;
+    -fx-border-style: solid;
+    -fx-padding: 20px;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.8), 40, 0, 0, 15);
+}
+
+/* ========== 제목 ========== */
+.dodge-game-title {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(139, 74, 158, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(139, 111, 63, 0.3), 0, 0, 2, 2),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.6), 20, 0, 0, 0);
+}
+
+/* ========== 정보 패널 ========== */
+.dodge-info-panel {
+    -fx-spacing: 15;
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+
+/* ========== 통계 박스 ========== */
+.dodge-stat-box {
+    -fx-background-color: linear-gradient(to bottom, #5a3a7b 0%, #4a2a6b 100%);
+    -fx-padding: 10px 20px;
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
+}
+
+.dodge-stat-title {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 5, 0, 0, 0);
+}
+
+.dodge-time-value {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(139, 74, 158, 0.3), 8, 0, 0, 0);
+}
+
+/* 시간 경고 (3초 이하) */
+.dodge-time-value-warning {
+    -fx-text-fill: #ff6b6b;
+    -fx-effect: dropshadow(gaussian, rgba(255, 107, 107, 0.8), 15, 0, 0, 0);
+}
+
+/* ========== 게임 영역 ========== */
+.dodge-game-area {
+    -fx-background-color: #1a0f2a;
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 0);
+}
+
+/* ========== 플레이어 ========== */
+.dodge-player {
+    -fx-effect: dropshadow(gaussian, rgba(74, 144, 226, 0.8), 20, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 4);
+}
+
+/* ========== 장애물 ========== */
+.dodge-obstacle {
+    -fx-effect: dropshadow(gaussian, rgba(255, 107, 107, 0.8), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 4);
+}
+
+/* ========== 시작 버튼 ========== */
+.dodge-start-button {
+    -fx-background-color: linear-gradient(to bottom, #f4e5b7 0%, #8b4a9e 100%);
+    -fx-text-fill: #1e5128;
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 16px 35px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: #6b3a7b;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-cursor: hand;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 6),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 20, 0, 0, 6);
+}
+
+.dodge-start-button:hover {
+    -fx-translate-y: -3;
+    -fx-effect: innershadow(gaussian, rgba(255, 255, 255, 0.3), 0, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 9),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.6), 25, 0, 0, 9);
+}
+
+.dodge-start-button:pressed {
+    -fx-translate-y: 2;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0, 0, 2),
+                dropshadow(gaussian, #5a4a2a, 0, 0, 0, 2);
+}
+
+/* ========== 상태 레이블 ========== */
+.dodge-status-label {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.6), 20, 0, 0, 0),
+                dropshadow(gaussian, rgba(139, 74, 158, 0.4), 10, 0, 0, 0);
+}
+
+/* ========== 지시사항 ========== */
+.dodge-instruction {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.4), 15, 0, 0, 0),
+                dropshadow(gaussian, rgba(139, 74, 158, 0.3), 8, 0, 0, 0);
+}
+
+/* ========== 결과 오버레이 ========== */
+.dodge-result-overlay {
+    -fx-background-color: rgba(26, 15, 42, 0.95);
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 8px;
+    -fx-border-style: solid;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.9), 50, 0, 0, 0);
+}
+
+.dodge-result-label-success {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(244, 229, 183, 0.8), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(139, 74, 158, 0.6), 20, 0, 0, 0);
+}
+
+.dodge-result-label-fail {
+    -fx-font-family: "Cinzel", "Times New Roman", serif;
+    -fx-font-size: 42px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ff6b6b;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 0, 0, 3, 3),
+                dropshadow(gaussian, rgba(255, 107, 107, 0.8), 30, 0, 0, 0),
+                dropshadow(gaussian, rgba(238, 51, 51, 0.5), 15, 0, 0, 0);
+}
+
+.dodge-result-score {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-effect: dropshadow(gaussian, rgba(244, 229, 183, 0.5), 12, 0, 0, 0),
+                dropshadow(gaussian, rgba(139, 74, 158, 0.3), 8, 0, 0, 0);
+}
+
+.dodge-result-time {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8b4a9e;
+    -fx-effect: dropshadow(gaussian, rgba(139, 74, 158, 0.4), 10, 0, 0, 0);
+}
+
+/* ========== 관전 모드 ========== */
+.dodge-spectator-label {
+    -fx-font-family: "Orbitron", "Consolas", monospace;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f4e5b7;
+    -fx-background-color: linear-gradient(to bottom, #8b6f3f 0%, #6b5530 100%);
+    -fx-padding: 10px 25px;
+    -fx-border-color: #8b4a9e;
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+    -fx-effect: innershadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0),
+                dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 4);
+}

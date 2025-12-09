@@ -1,0 +1,163 @@
+package org.example.ui;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.example.model.User;
+import org.example.service.DatabaseService;
+
+import java.util.List;
+
+/**
+ * ???�적 ?�면
+ */
+public class StatsView {
+
+    private final Stage primaryStage;
+    private final DatabaseService dbService;
+    private User currentUser;
+    private Runnable onBackToMenu;
+
+    public StatsView(Stage stage, User user) {
+        this.primaryStage = stage;
+        this.currentUser = user;
+        this.dbService = DatabaseService.getInstance();
+    }
+
+    public void setOnBackToMenu(Runnable callback) {
+        this.onBackToMenu = callback;
+    }
+
+    /**
+     * ?�적 조회 ?�면 ?�시
+     */
+    public void show() {
+        // 배경
+        StackPane root = new StackPane();
+        root.getStyleClass().add("screen-root");
+
+        // 카드 ?�이?�웃
+        BorderPane cardPane = new BorderPane();
+        cardPane.getStyleClass().add("card-panel");
+        cardPane.setPadding(new Insets(20, 24, 20, 24));
+
+        // ?�목
+        Label title = new Label("???�적");
+        title.getStyleClass().add("screen-title");
+        BorderPane.setAlignment(title, Pos.CENTER);
+        cardPane.setTop(title);
+
+        // ?�용???�보 최신??        User freshUserInfo = dbService.getUserInfo(currentUser.getUserId());
+        if (freshUserInfo != null) {
+            currentUser = freshUserInfo;
+        }
+
+        // ?�적 ?�약
+        VBox statsBox = createStatsBox();
+        cardPane.setCenter(statsBox);
+
+        // 최근 기록
+        VBox historyBox = createHistoryBox();
+        cardPane.setBottom(historyBox);
+        BorderPane.setAlignment(historyBox, Pos.CENTER);
+        BorderPane.setMargin(historyBox, new Insets(15, 0, 0, 0));
+
+        // ?�체 콘텐�?        VBox content = new VBox(18, cardPane);
+        content.setAlignment(Pos.TOP_CENTER);
+        content.setPadding(new Insets(24));
+
+        // 메뉴�??�아가�?버튼
+        Button btnBack = new Button("메뉴�??�아가�?);
+        btnBack.getStyleClass().add("back-to-menu-button");
+        btnBack.setOnAction(e -> {
+            if (onBackToMenu != null) onBackToMenu.run();
+        });
+        content.getChildren().add(btnBack);
+
+        root.getChildren().add(content);
+
+        Scene scene = new Scene(root, 620, 720);
+        scene.getStylesheets().add(getClass().getResource("/css/common.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/game.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("???�적 - " + currentUser.getUserId());
+    }
+
+    /**
+     * ?�적 ?�약 박스
+     */
+    private VBox createStatsBox() {
+        VBox box = new VBox(10);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add("card-section");
+
+        Label lblUserId = new Label("?�레?�어: " + currentUser.getUserId());
+        lblUserId.getStyleClass().add("stat-label-strong");
+
+        Label lblWin = new Label("?�리: " + currentUser.getWinCount() + "??);
+        lblWin.getStyleClass().add("stat-win");
+
+        Label lblLoss = new Label("?�배: " + currentUser.getLossCount() + "??);
+        lblLoss.getStyleClass().add("stat-loss");
+
+        Label lblDraw = new Label("무승부: " + currentUser.getDrawCount() + "??);
+        lblDraw.getStyleClass().add("stat-draw");
+
+        Label lblTotal = new Label("�?게임: " + currentUser.getTotalGames() + "??);
+        lblTotal.getStyleClass().add("stat-normal");
+
+        Label lblWinRate = new Label(String.format("?�률: %.1f%%", currentUser.getWinRate()));
+        lblWinRate.getStyleClass().add("stat-rate");
+
+        Separator separator = new Separator();
+        separator.getStyleClass().add("thin-separator");
+
+        box.getChildren().addAll(
+            lblUserId,
+            separator,
+            lblWin,
+            lblLoss,
+            lblDraw,
+            lblTotal,
+            lblWinRate
+        );
+
+        return box;
+    }
+
+    /**
+     * 최근 게임 기록 박스
+     */
+    private VBox createHistoryBox() {
+        VBox box = new VBox(10);
+        box.setAlignment(Pos.TOP_LEFT);
+
+        Label title = new Label("최근 게임 기록");
+        title.getStyleClass().add("section-title");
+
+        List<String> history = dbService.getUserGameHistory(currentUser.getUserId(), 10);
+
+        if (history.isEmpty()) {
+            Label noData = new Label("?�직 게임 기록???�습?�다.");
+            noData.getStyleClass().add("stat-empty");
+            box.getChildren().addAll(title, noData);
+        } else {
+            ListView<String> listView = new ListView<>();
+            listView.getItems().addAll(history);
+            listView.setPrefHeight(220);
+            listView.getStyleClass().add("history-list");
+            box.getChildren().addAll(title, listView);
+        }
+
+        return box;
+    }
+}
+

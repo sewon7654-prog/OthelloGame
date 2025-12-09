@@ -1,0 +1,122 @@
+/* 메뉴 화면 스타일 - 진짜 픽셀 아트 스타일 */
+
+.menu-container {
+    -fx-background-color: #87CEEB;
+    /* 픽셀 패턴은 Java 코드에서 설정 */
+}
+
+.menu-title {
+    -fx-font-size: 90px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 5, 5),
+                dropshadow(gaussian, rgba(0,0,0,0.8), 0, 0, 3, 3);
+    -fx-stroke: #000000;
+    -fx-stroke-width: 4px;
+}
+
+.status-label-logged-in {
+    -fx-font-size: 28px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 4, 4);
+    -fx-stroke: #000000;
+    -fx-stroke-width: 3px;
+}
+
+.status-label-guest {
+    -fx-font-size: 24px;
+    -fx-text-fill: #C0C0C0;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 0, 0, 3, 3);
+    -fx-stroke: #000000;
+    -fx-stroke-width: 2px;
+}
+
+/* 게임 모드 버튼 - 진짜 픽셀 아트 스타일 (8-bit 느낌) */
+.game-mode-button {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-min-width: 650px;
+    -fx-min-height: 100px;
+    -fx-background-color: #8B4513;
+    /* 픽셀 패턴은 Java 코드에서 설정 */
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 4, 4);
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 4px;
+    -fx-border-radius: 0px;
+    -fx-padding: 12px;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 3px;
+}
+
+.game-mode-button:hover {
+    -fx-background-color: #A0522D;
+    -fx-text-fill: #FFFF00;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 6, 6);
+}
+
+.game-mode-button:pressed {
+    -fx-background-color: #654321;
+    -fx-text-fill: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 2, 2);
+}
+
+/* 계정 버튼 - 로그인 (픽셀 아트 스타일) */
+.login-button {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-min-width: 400px;
+    -fx-min-height: 80px;
+    -fx-background-color: #8B4513;
+    /* 픽셀 패턴은 Java 코드에서 설정 */
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 3, 3);
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 3px;
+    -fx-border-radius: 0px;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 2px;
+}
+
+.login-button:hover {
+    -fx-background-color: #A0522D;
+    -fx-text-fill: #FFFF00;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 5, 5);
+}
+
+/* 계정 버튼 - 전적/설정/로그아웃 (픽셀 아트 스타일) */
+.account-button {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Mulmaru", "NeoDunggeunmo", "DungGeunmo", "Courier New", monospace;
+    -fx-min-width: 250px;
+    -fx-min-height: 80px;
+    -fx-background-color: #8B4513;
+    /* 픽셀 패턴은 Java 코드에서 설정 */
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 0px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 3, 3);
+    -fx-cursor: hand;
+    -fx-border-color: #000000;
+    -fx-border-width: 3px;
+    -fx-border-radius: 0px;
+    -fx-stroke: #000000;
+    -fx-stroke-width: 2px;
+}
+
+.account-button:hover {
+    -fx-background-color: #A0522D;
+    -fx-text-fill: #FFFF00;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,1.0), 0, 0, 5, 5);
+}
+

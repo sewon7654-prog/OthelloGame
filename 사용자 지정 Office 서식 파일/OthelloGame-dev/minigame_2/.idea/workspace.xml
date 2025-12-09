@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="86bb9c60-c98e-4f76-bd18-aeabce8a41eb" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/java/org/example/ui/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/org/example/ui/GameView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/java/org/example/ui/SettingsView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/org/example/ui/SettingsView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/java/org/example/ui/StatsView.java" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/java/org/example/ui/StatsView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/common.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/common.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/game.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/game.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/login.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/login.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/menu.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/menu.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/minigame/dodge.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/minigame/dodge.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/minigame/memory.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/minigame/memory.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/main/resources/css/minigame/reaction.css" beforeDir="false" afterPath="$PROJECT_DIR$/../src/main/resources/css/minigame/reaction.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20241205_151024166.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20241209_212023160_01.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250305_192601351.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250403_033237829.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250610_062649117.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250610_063157501.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250728_041520122.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20250728_074532344.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/KakaoTalk_20251102_112603028.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/image.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/1.파일불러오기.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/10.성별복사.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/11.컬럼병합_1.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/12.컬럼병합_2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/13.삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/14.행항목삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/15.행항목삭제 확인.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/15.행항목삭제_수치형 검색.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/16.부분삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/17.부분삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/18.로컬삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/19.로컬삭제2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/2.기초통계 파악.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/20.로컬삭제3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/20.로컬삭제4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/21.마스킹.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/22.마스킹2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/23.마스킹3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/24.라운딩.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/25.라운딩2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/26.라운딩3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/27.잡음추가.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/28.상하단코딩_신장.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/29.상단코딩_연령.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/3.데이터유형정의.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/30.상하단코딩_체중.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/31.상단코딩_허리둘레.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/32.문자범주화.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/32.일방향암호화.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/33.양방향암호화.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/34.복호화.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/35.반출준비.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/36.처리후 범주형 항목 통계.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/37.처리전 수치형 분포.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/38.처리후 수치형 분포.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/39.일련번호 생성.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/4.개별항목통계.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/40.결합키 생성.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/41.결합키 추출.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/42.결합키 삭제.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/5.전체범주형 항목 통계.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/5.전체수치형 항목 통계2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/6.박스플롯.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/6.컬럼별 빈도.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/6.컬럼별 빈도_청력.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/7.(개별)히스토그램+정규분포곡선.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/7.(개별)히스토그램+정규분포곡선2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/8.(전체)히스토그램+정규분포곡선.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/8.(전체)히스토그램+정규분포곡선2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/9.나이계산.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/Health data.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/Health data_최종통합.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/가명정보 특강_2511.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/가명정보 특강_2511_v1.0.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/가명정보 특강/가명정보 특강/연령_정규분포.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/감염병 정보 플랫폼 제안발표.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/고그웹 중간발표 최종.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/고그웹 중간발표.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/고그웹 중간발표.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/내리막경사법.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/보고서 윤동혁 수정본2.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/부록. 퍼셉트론 학습 (오일석, 패턴인식개론).pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/상시과제_7장_2401502_윤동혁.docx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../카카오톡 받은 파일/상시과제_8장_2401502_윤동혁.docx" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="3675NUkGfJjUei9AMroRjpRGo3A" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "dev",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/user/Documents/사용자 지정 Office 서식 파일/OthelloGame-dev/minigame_2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
+        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="86bb9c60-c98e-4f76-bd18-aeabce8a41eb" name="변경" comment="" />
+      <created>1764344728387</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1764344728387</updated>
+      <workItem from="1764344730229" duration="625000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
